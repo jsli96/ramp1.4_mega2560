@@ -1,3 +1,10 @@
+// One tooth is 2mm
+// Gear has 16 teeth.
+// Stepper one rev 200*16=3200 pause
+// 320 mm , 40mm
+// middle point is 160 mm
+// 160 /(16*2) = 5 rev
+// 5 * 3200 = 16000 pause
 #include <AccelStepper.h>
 #define MEASURE_X_EN 24
 #define MEASURE_X_STEP 26
@@ -10,12 +17,21 @@
 
 AccelStepper stepper_measure_x(AccelStepper::DRIVER, MEASURE_X_STEP, MEASURE_X_DIR);
 AccelStepper stepper_measure_y(AccelStepper::DRIVER, MEASURE_Y_STEP, MEASURE_Y_DIR);
-String inString = ""; // string to hold input
-int targetPos;
 
 void setup()
 {
   Serial.begin(9600);
+  motor_parameters_init();
+  motor_initial_calibration();
+  motor_center_position();
+}
+
+void loop()
+{
+}
+
+void motor_parameters_init()
+{
   stepper_measure_x.setMaxSpeed(20000);
   stepper_measure_x.setSpeed(20000);
   stepper_measure_x.setAcceleration(20000);
@@ -28,37 +44,9 @@ void setup()
   digitalWrite(MEASURE_Y_EN, HIGH);
   pinMode(X_STOP_PIN, INPUT);
   pinMode(Y_STOP_PIN, INPUT);
-  initial_calibration();
 }
 
-void loop()
-{
-  // if (Serial.available() > 0)
-  // {
-  //   int inChar = Serial.read();
-  //   if (isDigit(inChar))
-  //   {
-  //     // convert the incoming byte to a char and add it to the string:
-  //     inString += (char)inChar;
-  //   }
-
-  //   if (inChar == '\n')
-  //   {
-  //     Serial.print("Value:");
-  //     targetPos = inString.toInt();
-  //     Serial.println(targetPos);
-  //     // clear the string for new input:
-  //     inString = "";
-  //   }
-  //   stepper_measure_x.moveTo(targetPos);
-  //   while (stepper_measure_x.currentPosition() != targetPos)
-  //   {
-  //     stepper_measure_x.run();
-  //   }
-  // }
-}
-
-void initial_calibration()
+void motor_initial_calibration()
 {
   Serial.print("Start calibration process.\n");
   int home_x = digitalRead(X_STOP_PIN);
@@ -89,4 +77,14 @@ void initial_calibration()
     }
   }
   Serial.println("Initial Calibration complete!\n");
+}
+
+void motor_center_position()
+{
+  stepper_measure_x.moveTo(-16000);
+  stepper_measure_y.moveTo(-16000);
+  while (stepper_measure_x.distanceToGo() != 0 || stepper_measure_y.distanceToGo() != 0){
+    stepper_measure_x.run();
+    stepper_measure_y.run();
+  }
 }
