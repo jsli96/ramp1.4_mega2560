@@ -22,7 +22,7 @@ void setup()
 {
   Serial.begin(9600);
   motor_parameters_init();
-  motor_initial_calibration();
+motor_initial_calibration();
   motor_center_position();
 }
 
@@ -87,4 +87,5 @@ void motor_center_position()
     stepper_measure_x.run();
     stepper_measure_y.run();
   }
+  Serial.println("Measuring system ready to use!\n");
 }
