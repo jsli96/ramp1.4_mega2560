@@ -19,7 +19,7 @@ elapsedMillis printTime;
 void setup(){
     Serial.begin(9600);
     myStepper_y.setMaxSpeed(2000.0);   // the motor accelerates to this speed exactly without overshoot. Try other values.
-    myStepper_y.setSpeed(-1000);
+    myStepper_y.setSpeed(1000);
     myStepper_z.setMaxSpeed(2000.0);   // the motor accelerates to this speed exactly without overshoot. Try other values.
     myStepper_z.setSpeed(1000);
     pinMode(y_Enable, OUTPUT);    // the motor enable pin needs to be LOW to make driver works

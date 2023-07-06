@@ -1,6 +1,7 @@
 {
-    "port": "/dev/tty.usbserial-14210",
+    "port": "COM3",
     "configuration": "cpu=atmega2560",
     "board": "arduino:avr:mega",
-    "sketch": "test/ramp1.4_x_y_z_device/ramp1.4_x_y_z_device.ino"
+    "sketch": "haptic-device_mega2560\\haptic-device_mega2560.ino",
+    "output": "../Arduino"
 }
