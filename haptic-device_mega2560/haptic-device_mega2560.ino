@@ -22,8 +22,9 @@ AccelStepper myStepper_y(AccelStepper::DRIVER, y_Step, y_Dir, true);
 AccelStepper myStepper_z(AccelStepper::DRIVER, z_Step, z_Dir, true);
 elapsedMillis printTime;
 
-void pin_setup(){
-  pinMode(y_Enable, OUTPUT); 
+void pin_init()
+{
+  pinMode(y_Enable, OUTPUT);
   digitalWrite(y_Enable, LOW); // the motor enable pin needs to be LOW to make driver works
   pinMode(x_Enable, OUTPUT);
   digitalWrite(x_Enable, LOW); // the motor enable pin needs to be LOW to make driver works
@@ -33,25 +34,6 @@ void pin_setup(){
   attachInterrupt(digitalPinToInterrupt(x_Stop), x_intr, FALLING); // Stop pin interrupt
   pinMode(y_Stop, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(y_Stop), y_intr, FALLING); // Stop pin interrupt
-}
-
-void setup()
-{
-  Serial.begin(115200);
-  myStepper_x.setMaxSpeed(2000.0); // the motor accelerates to this speed exactly without overshoot.
-  myStepper_y.setMaxSpeed(2000.0); // the motor accelerates to this speed exactly without overshoot.
-  myStepper_z.setMaxSpeed(2000.0); // the motor accelerates to this speed exactly without overshoot.
-  myStepper_y.setSpeed(-1000);
-  myStepper_x.setSpeed(-1000);
-  pin_setup();
-  initial_home();
-}
-
-void loop()
-{
-    myStepper_y.runSpeed();
-    myStepper_x.runSpeed();
-
 }
 
 void initial_home()
@@ -84,4 +66,22 @@ void y_intr()
   myStepper_y.setSpeed(0);
   y_home = true;
   Serial.println("Y Motor speed set to zero.");
+}
+
+void setup()
+{
+  Serial.begin(115200);
+  myStepper_x.setMaxSpeed(2000.0); // the motor accelerates to this speed exactly without overshoot.
+  myStepper_y.setMaxSpeed(2000.0); // the motor accelerates to this speed exactly without overshoot.
+  myStepper_z.setMaxSpeed(2000.0); // the motor accelerates to this speed exactly without overshoot.
+  myStepper_y.setSpeed(-800);
+  myStepper_x.setSpeed(-800);
+  pin_init();
+  initial_home();
+}
+
+void loop()
+{
+  myStepper_y.runSpeed();
+  myStepper_x.runSpeed();
 }
