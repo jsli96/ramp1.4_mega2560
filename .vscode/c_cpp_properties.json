@@ -18,6 +18,7 @@
             "includePath": [
                 "C:\\Users\\jiash\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
                 "C:\\Users\\jiash\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
+                "C:\\Users\\jiash\\Documents\\Arduino\\libraries\\TimerOne",
                 "C:\\Users\\jiash\\Documents\\Arduino\\libraries\\AccelStepper\\src",
                 "C:\\Users\\jiash\\Documents\\Arduino\\libraries\\elapsedMillis",
                 "c:\\users\\jiash\\appdata\\local\\arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7\\lib\\gcc\\avr\\7.3.0\\include",

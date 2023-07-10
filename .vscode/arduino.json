@@ -2,6 +2,6 @@
     "port": "COM3",
     "configuration": "cpu=atmega2560",
     "board": "arduino:avr:mega",
-    "sketch": "haptic-device_mega2560\\haptic-device_mega2560.ino",
+    "sketch": "haptic-device_mega2560\\softeware_interrupt.ino",
     "output": "../Arduino"
 }
