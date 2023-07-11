@@ -27,9 +27,9 @@ while True:
             if id_landmark == 0:
                 h, w, c = img.shape
                 cx_0, cy_0 = int(landmark.x*w), int(landmark.y*h)
-            elif id_landmark == 2:
+            elif id_landmark == 1:
                 h, w, c = img.shape
-                cx_2, cy_2 = int(landmark.x*w), int(landmark.y*h)
+                cx_1, cy_1 = int(landmark.x*w), int(landmark.y*h)
             elif id_landmark == 9:
                 h, w, c = img.shape
                 cx_9, cy_9 = int(landmark.x * w), int(landmark.y * h)
@@ -38,7 +38,7 @@ while True:
                 cx_17, cy_17 = int(landmark.x * w), int(landmark.y * h)
 
         cv2.line(img, (cx_0, cy_0), (cx_9, cy_9), (255, 0, 0), 5)
-        cv2.line(img, (cx_2, cy_2), (cx_17, cy_17), (255, 0, 0), 5)
+        cv2.line(img, (cx_1, cy_1), (cx_17, cy_17), (255, 0, 0), 5)
 
 
 
