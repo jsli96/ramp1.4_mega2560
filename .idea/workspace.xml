@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="88315cc2-3dfa-47f5-b69f-054b305260d7" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/haptic-device_mega2560/haptic-device_mega2560.ino" beforeDir="false" afterPath="$PROJECT_DIR$/haptic-device_mega2560/haptic-device_mega2560.ino" afterDir="false" />
-    </list>
+    <list default="true" id="88315cc2-3dfa-47f5-b69f-054b305260d7" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -78,7 +75,7 @@
       <workItem from="1688676033381" duration="84000" />
       <workItem from="1689021252172" duration="11755000" />
       <workItem from="1689188850205" duration="826000" />
-      <workItem from="1689272046514" duration="1613000" />
+      <workItem from="1689272046514" duration="2206000" />
     </task>
     <task id="LOCAL-00001" summary="add hand center detect">
       <created>1689027459872</created>
