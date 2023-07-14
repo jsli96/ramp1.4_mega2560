@@ -16,9 +16,10 @@
 bool x_home = false;
 bool y_home = false;
 bool z_home = false;
-const int x_center_point = -10000;
-const int y_center_point = -17500;
+const int x_center_point = -25000;
+const int y_center_point = -18500;
 const int z_center_point = -100;
+String incomingString = "0";
 
 AccelStepper myStepper_x(AccelStepper::DRIVER, x_Step, x_Dir, true);
 AccelStepper myStepper_y(AccelStepper::DRIVER, y_Step, y_Dir, true);
@@ -74,39 +75,145 @@ void y_intr()
 void setup()
 {
   Serial.begin(115200);
-  myStepper_x.setMaxSpeed(2000.0); // the motor accelerates to this speed exactly without overshoot.
-  myStepper_y.setMaxSpeed(2000.0); // the motor accelerates to this speed exactly without overshoot.
-  myStepper_z.setMaxSpeed(2000.0); // the motor accelerates to this speed exactly without overshoot.
+  myStepper_x.setMaxSpeed(1500.0); // the motor accelerates to this speed exactly without overshoot.
+  myStepper_y.setMaxSpeed(1500.0); // the motor accelerates to this speed exactly without overshoot.
+  myStepper_z.setMaxSpeed(1500.0); // the motor accelerates to this speed exactly without overshoot.
   myStepper_x.setAcceleration(100);
   myStepper_y.setAcceleration(100);
   myStepper_y.setSpeed(1200); // Positive speed will move to zero point, negative point will move to oppisite direction.
   myStepper_x.setSpeed(1200);
   pin_init();
-  initial_home();
-  delay(1000);
-  Serial.println("Begin moving to the center point.");
-  myStepper_x.moveTo(x_center_point);
-  myStepper_y.moveTo(y_center_point);
+  // initial_home();
+  // delay(1000);
+  // Serial.println("Begin moving to the center point.");
+  // move_to_center();
+  // Serial.println("System ready!!!");
 }
 
 void loop()
 {
-  while (myStepper_x.distanceToGo() != 0)
+  if (Serial.available())
   {
-    myStepper_x.setSpeed(cal_speed_dir(x_center_point, myStepper_x.currentPosition(), 1200));
-    myStepper_y.setSpeed(cal_speed_dir(y_center_point, myStepper_y.currentPosition(), 1200));
-    myStepper_x.run();
-    myStepper_y.run();
-    Serial.println(myStepper_x.distanceToGo());
+    incomingString = Serial.readString();
+    if (incomingString == "stop" ){
+        digitalWrite(y_Enable, HIGH);
+        digitalWrite(x_Enable, HIGH);
+        digitalWrite(z_Enable, HIGH);
+        Serial.println("All motors are shutted down!");
+    }
+    else{
+      adjust_probe_position(incomingString);
+    }
+  }
+  Serial.println("Standby...");
+  delay(1000);
+}
+
+void adjust_probe_position(String incomingString)
+{
+  switch (incomingString[0])
+  {
+  case 'x':
+    Serial.print("Axis: ");
+    Serial.println(incomingString[0]);
+    Serial.print("Destination: ");
+    Serial.println(incomingString.substring(2).toInt());
+    move_x(incomingString.substring(2).toInt());
+    break;
+  case 'y':
+    Serial.print("Axis: ");
+    Serial.println(incomingString[0]);
+    Serial.print("Destination: ");
+    Serial.println(incomingString.substring(2).toInt());
+    move_y(incomingString.substring(2).toInt());
+    break;
+  case 'z':
+    Serial.print("Axis: ");
+    Serial.println(incomingString[0]);
+    Serial.print("Destination: ");
+    Serial.println(incomingString.substring(2).toInt());
+    move_z(incomingString.substring(2).toInt());
+    break;
   }
 }
 
-int cal_speed_dir(int target_pos, int current_pos, int abs_speed){
+void move_to_center()
+{
+  myStepper_x.moveTo(x_center_point);
+  myStepper_y.moveTo(y_center_point);
+  while (myStepper_x.distanceToGo() != 0 || myStepper_y.distanceToGo() != 0)
+  {
+    myStepper_x.setSpeed(cal_speed_dir(x_center_point, myStepper_x.currentPosition(), 1500));
+    myStepper_y.setSpeed(cal_speed_dir(y_center_point, myStepper_y.currentPosition(), 1500));
+    if (myStepper_x.distanceToGo() != 0)
+    {
+      myStepper_x.run();
+      // Serial.print("Distance to go on x direction: ");
+      // Serial.println(myStepper_x.distanceToGo());
+    }
+    if (myStepper_y.distanceToGo() != 0)
+    {
+      myStepper_y.run();
+      // Serial.print("Distance to go on y direction: ");
+      //  Serial.println(myStepper_y.distanceToGo());
+    }
+  }
+  Serial.print("Current position (x, y): (");
+  Serial.print(myStepper_x.currentPosition());
+  Serial.print(", ");
+  Serial.print(myStepper_y.currentPosition());
+  Serial.print(").");
+  Serial.println("Probe at the center position.");
+}
+
+int cal_speed_dir(int target_pos, int current_pos, int abs_speed)
+{
   int result = target_pos - current_pos;
-  if (result > 0){
+  if (result > 0)
+  {
     return abs(abs_speed);
   }
-  else{
+  else
+  {
     return -abs(abs_speed);
   }
+}
+
+void move_x(int distance)
+{
+  myStepper_x.move(distance);
+  Serial.println(distance);
+  while (myStepper_x.distanceToGo() != 0)
+  {
+    myStepper_x.setSpeed(cal_speed_dir(myStepper_x.currentPosition() + distance, myStepper_x.currentPosition(), 500));
+    myStepper_x.run();
+  }
+  Serial.print("X current position: ");
+  Serial.println(myStepper_x.currentPosition());
+}
+
+void move_y(int distance)
+{
+  myStepper_y.move(distance);
+  Serial.println(distance);
+  while (myStepper_y.distanceToGo() != 0)
+  {
+    myStepper_y.setSpeed(cal_speed_dir(myStepper_y.currentPosition() + distance, myStepper_y.currentPosition(), 500));
+    myStepper_y.run();
+  }
+  Serial.print("Y current position: ");
+  Serial.println(myStepper_x.currentPosition());
+}
+
+void move_z(int distance)
+{
+  myStepper_z.move(distance);
+  Serial.println(distance);
+  while (myStepper_z.distanceToGo() != 0)
+  {
+    myStepper_z.setSpeed(cal_speed_dir(myStepper_z.currentPosition() + distance, myStepper_z.currentPosition(), 500));
+    myStepper_z.run();
+  }
+  Serial.print("Z current position: ");
+  Serial.println(myStepper_z.currentPosition());
 }
