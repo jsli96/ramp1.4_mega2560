@@ -26,10 +26,10 @@ while True:
             print(id_landmark, landmark)
             if id_landmark == 0:
                 h, w, c = img.shape
-                cx_0, cy_0 = int(landmark.x*w), int(landmark.y*h)
+                cx_0, cy_0 = int(landmark.x*w), int(landmark.y * h)
             elif id_landmark == 1:
                 h, w, c = img.shape
-                cx_1, cy_1 = int(landmark.x*w), int(landmark.y*h)
+                cx_1, cy_1 = int(landmark.x*w), int(landmark.y * h)
             elif id_landmark == 9:
                 h, w, c = img.shape
                 cx_9, cy_9 = int(landmark.x * w), int(landmark.y * h)
