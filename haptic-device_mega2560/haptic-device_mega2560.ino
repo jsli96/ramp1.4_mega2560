@@ -19,7 +19,7 @@ bool y_home = false;
 bool z_home = false;
 const long x_center_point = -22000;
 const long y_center_point = -18500;
-const long z_center_point = -8000;
+const long z_center_point = -9500;
 long adj_x_center = 0;
 long adj_y_center = 0;
 long adj_z_center = 0;
@@ -109,9 +109,12 @@ void loop()
     {
       log_adjust_center_point();
     }
-    else
+    else if (incomingString[0] == 'x' || incomingString[0] == 'y' || incomingString[0] == 'z')
     {
       adjust_probe_position(incomingString);
+    }
+    else
+    {
       points_select(incomingString);
     }
 
@@ -180,6 +183,8 @@ void points_select(String incomingString)
   int temp = incomingString.toInt();
   Serial.print("Incoming point: ");
   Serial.println(temp);
+  move_z(-1700, 1400);
+
   switch (temp)
   {
   case 24:
@@ -408,7 +413,7 @@ void point_12()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   delay(500);
   move_y(1250, 1400);
-  move_z(-2500, 1400);
+  move_z(-1700, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("point 12 Excuted. standby.");
@@ -547,7 +552,7 @@ void point_6()
   Serial.println("Now execute point 6.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   delay(500);
-  move_y(-2500, 1400);
+  move_y(-1250, 1400);
   move_z(-2500, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
@@ -558,7 +563,7 @@ void point_18()
   Serial.println("Now execute point 18.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   delay(500);
-  move_y(-1250, 1400);
+  move_y(-2500, 1400);
   move_z(-2500, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
