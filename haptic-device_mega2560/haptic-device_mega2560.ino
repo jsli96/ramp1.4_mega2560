@@ -79,10 +79,10 @@ void setup()
   myStepper_y.setAcceleration(100);
   myStepper_z.setAcceleration(100);
   pin_init();
-  initial_home();
-  delay(1000);
-  Serial.println("Begin moving to the center point.");
-  move_to_center(x_center_point, y_center_point, z_center_point);
+  // initial_home();
+  // delay(1000);
+  // Serial.println("Begin moving to the center point.");
+  // move_to_center(x_center_point, y_center_point, z_center_point);
   Serial.println("System ready!!!");
 }
 
@@ -158,21 +158,21 @@ void adjust_probe_position(String incomingString)
     Serial.println(incomingString[0]);
     Serial.print("Destination: ");
     Serial.println(incomingString.substring(2).toInt());
-    move_x(incomingString.substring(2).toInt(), 500);
+    move_x(incomingString.substring(2).toInt(), 1400);
     break;
   case 'y':
     Serial.print("Axis: ");
     Serial.println(incomingString[0]);
     Serial.print("Destination: ");
     Serial.println(incomingString.substring(2).toInt());
-    move_y(incomingString.substring(2).toInt(), 500);
+    move_y(incomingString.substring(2).toInt(), 1400);
     break;
   case 'z':
     Serial.print("Axis: ");
     Serial.println(incomingString[0]);
     Serial.print("Destination: ");
     Serial.println(incomingString.substring(2).toInt());
-    move_z(incomingString.substring(2).toInt(), 500);
+    move_z(incomingString.substring(2).toInt(), 1400);
     break;
   }
 }
@@ -269,9 +269,9 @@ void move_to_center(long x_c, long y_c, long z_c)
   myStepper_z.moveTo(z_c);
   while (myStepper_x.distanceToGo() != 0 || myStepper_y.distanceToGo() != 0 || myStepper_z.distanceToGo() != 0)
   {
-    myStepper_x.setSpeed(cal_speed_dir(x_c, myStepper_x.currentPosition(), 1500));
-    myStepper_y.setSpeed(cal_speed_dir(y_c, myStepper_y.currentPosition(), 1500));
-    myStepper_z.setSpeed(cal_speed_dir(z_c, myStepper_z.currentPosition(), 1500));
+    myStepper_x.setSpeed(cal_speed_dir(x_c, myStepper_x.currentPosition(), 1400));
+    myStepper_y.setSpeed(cal_speed_dir(y_c, myStepper_y.currentPosition(), 1400));
+    myStepper_z.setSpeed(cal_speed_dir(z_c, myStepper_z.currentPosition(), 1400));
     if (myStepper_x.distanceToGo() != 0)
     {
       myStepper_x.run();
