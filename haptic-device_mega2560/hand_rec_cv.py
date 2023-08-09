@@ -26,6 +26,7 @@ while True:
             print(id_landmark, landmark)
             if id_landmark == 0:
                 h, w, c = img.shape
+                print(h, w)
                 cx_0, cy_0 = int(landmark.x*w), int(landmark.y * h)
             elif id_landmark == 1:
                 h, w, c = img.shape
