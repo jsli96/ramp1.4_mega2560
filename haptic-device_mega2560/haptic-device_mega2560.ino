@@ -20,6 +20,10 @@ bool z_home = false;
 const long x_center_point = -12000;
 const long y_center_point = -12000;
 const long z_center_point = -1000;
+const int full_distance = 6000;
+const int half_distance = 3000;
+const int full_distance_at_45 = 4242;
+const int half_distance_at_45 = 2121;
 long adj_x_center = 0;
 long adj_y_center = 0;
 long adj_z_center = 0;
@@ -131,6 +135,10 @@ void loop()
     {
       log_z_lowest_point();
     }
+    else if (incomingString == "home")
+    {
+      move_to_center(x_center_point, y_center_point, z_center_point);
+    }
     else if (incomingString == "current location")
     {
       show_current_location();
@@ -216,61 +224,73 @@ void adjust_probe_position(String incomingString)
 void points_select(String incomingString)
 {
   Serial.println(incomingString);
-  int temp = incomingString.toInt();
-  Serial.print("Incoming point: ");
-  Serial.println(temp);
-  // move_z(-1700, 1400);
-
-  switch (temp)
+  if (adj_x_center == 0 || adj_y_center == 0 || adj_z_center == 0)
   {
-  case 15:
-    point_15();
-    break;
-  case 14:
-    point_14();
-    break;
-  case 13:
-    point_13();
-    break;
-  case 12:
-    point_12();
-    break;
-  case 11:
-    point_11();
-    break;
-  case 10:
-    point_10();
-    break;
-  case 9:
-    point_9();
-    break;
-  case 8:
-    point_8();
-    break;
-  case 7:
-    point_7();
-    break;
-  case 6:
-    point_6();
-    break;
-  case 5:
-    point_5();
-    break;
-  case 4:
-    point_4();
-    break;
-  case 3:
-    point_3();
-    break;
-  case 2:
-    point_2();
-    break;
-  case 1:
-    point_1();
-    break;
-  case 16:
-    point_16();
-    break;
+    Serial.println("Please calbiate and log x y z postion first!");
+  }
+  if (adj_z_center_low == 0)
+  {
+    Serial.println("Please calbiate the lowest z postion first!");
+  }
+  if (adj_z_center_low != 0 && adj_x_center != 0 && adj_y_center != 0 && adj_z_center != 0)
+  {
+    int temp = incomingString.toInt();
+    Serial.print("Incoming point: ");
+    Serial.println(temp);
+    switch (temp)
+    {
+    case 15:
+      point_15();
+      break;
+    case 14:
+      point_14();
+      break;
+    case 13:
+      point_13();
+      break;
+    case 12:
+      point_12();
+      break;
+    case 11:
+      point_11();
+      break;
+    case 10:
+      point_10();
+      break;
+    case 9:
+      point_9();
+      break;
+    case 8:
+      point_8();
+      break;
+    case 7:
+      point_7();
+      break;
+    case 6:
+      point_6();
+      break;
+    case 5:
+      point_5();
+      break;
+    case 4:
+      point_4();
+      break;
+    case 3:
+      point_3();
+      break;
+    case 2:
+      point_2();
+      break;
+    case 1:
+      point_1();
+      break;
+    case 16:
+      point_16();
+      break;
+    default:
+      Serial.println("Commands not match!");
+      break;
+    }
   }
 }
 
@@ -432,23 +452,25 @@ void move_x_y_parallel(long x_distance, long y_distance, int speed)
 
 void point_16()
 {
-  Serial.println("Now execute point 0.");
+  Serial.println("Now execute point 16.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_z(-1700, 1400);
-  move_y(3000, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_y(full_distance, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  Serial.println("point 0 Excuted. standby.");
+  Serial.println("point 16 Excuted. standby.");
 }
 
 void point_8()
 {
   Serial.println("Now execute point 8.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_z(-1700, 1400);
-  move_y(1500, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_y(half_distance, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("point 8 Excuted. standby.");
@@ -456,161 +478,175 @@ void point_8()
 
 void point_1()
 {
-  Serial.println("Now execute point 11.");
+  Serial.println("Now execute point 1.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_x_y_parallel(625, 1082, 1400);
-  move_z(-2500, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_x_y_parallel(-full_distance_at_45, full_distance_at_45, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  Serial.println("point 11 Excuted. standby.");
+  Serial.println("point 1 Excuted. standby.");
 }
 
 void point_9()
 {
-  Serial.println("Now execute point 23.");
+  Serial.println("Now execute point 9.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_x_y_parallel(1250, 2165, 1400);
-  move_z(-2500, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_x_y_parallel(-half_distance_at_45, half_distance_at_45, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  Serial.println("point 23 Excuted. standby.");
+  Serial.println("point 9 Excuted. standby.");
 }
 
 void point_2()
 {
   Serial.println("Now execute point 10.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_x_y_parallel(1082, 625, 1400);
-  move_z(-2500, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_x(-full_distance, 1400);
+  delay(2000);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 2 Excuted. standby.");
+}
+
+void point_10()
+{
+  Serial.println("Now execute point 10.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  move_x(-half_distance, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("point 10 Excuted. standby.");
 }
 
-void point_10()
-{
-  Serial.println("Now execute point 22.");
-  move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  delay(500);
-  move_x_y_parallel(2165, 1250, 1400);
-  move_z(-2500, 1400);
-  delay(2000);
-  move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  Serial.println("point 22 Excuted. standby.");
-}
-
 void point_3()
 {
-  Serial.println("Now execute point 9.");
+  Serial.println("Now execute point 3.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_x(1250, 1400);
-  move_z(-2500, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_x_y_parallel(-full_distance_at_45, -full_distance_at_45, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  Serial.println("point 9 Excuted. standby.");
+  Serial.println("point 3 Excuted. standby.");
 }
 
 void point_11()
 {
-  Serial.println("Now execute point 21.");
+  Serial.println("Now execute point 11.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_x(2500, 1400);
-  move_z(-2500, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_x_y_parallel(-half_distance_at_45, -half_distance_at_45, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  Serial.println("point 21 Excuted. standby.");
+  Serial.println("point 11 Excuted. standby.");
 }
 
 void point_4()
 {
-  Serial.println("Now execute point 8.");
+  Serial.println("Now execute point 4.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_x_y_parallel(1082, -625, 1400);
-  move_z(-2500, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_y(-full_distance, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  Serial.println("point 8 Excuted. standby.");
+  Serial.println("point 4 Excuted. standby.");
 }
 void point_12()
 {
-  Serial.println("Now execute point 20.");
+  Serial.println("Now execute point 12.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_x_y_parallel(2165, -1250, 1400);
-  move_z(-2500, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_y(-half_distance_at_45, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  Serial.println("point 20 Excuted. standby.");
+  Serial.println("point 12 Excuted. standby.");
 }
 void point_5()
 {
-  Serial.println("Now execute point 7.");
+  Serial.println("Now execute point 5.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_x_y_parallel(625, -1082, 1400);
-  move_z(-2500, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_x_y_parallel(full_distance_at_45, -full_distance_at_45, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  Serial.println("point 7 Excuted. standby.");
+  Serial.println("point 5 Excuted. standby.");
 }
 void point_13()
 {
-  Serial.println("Now execute point 19.");
+  Serial.println("Now execute point 13.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_x_y_parallel(1250, -2165, 1400);
-  move_z(-2500, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_x_y_parallel(half_distance_at_45, -half_distance_at_45, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  Serial.println("point 19 Excuted. standby.");
+  Serial.println("point 13 Excuted. standby.");
 }
 void point_6()
 {
   Serial.println("Now execute point 6.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_y(-1250, 1400);
-  move_z(-2500, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_x(full_distance, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("point 6 Excuted. standby.");
 }
 void point_14()
 {
-  Serial.println("Now execute point 18.");
+  Serial.println("Now execute point 14.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_y(-2500, 1400);
-  move_z(-2500, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_x(half_distance, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  Serial.println("point 18 Excuted. standby.");
+  Serial.println("point 14 Excuted. standby.");
 }
 void point_7()
 {
-  Serial.println("Now execute point 5.");
+  Serial.println("Now execute point 7.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_x_y_parallel(-625, -1082, 1400);
-  move_z(-2500, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_x_y_parallel(full_distance_at_45, full_distance_at_45, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  Serial.println("point 5 Excuted. standby.");
+  Serial.println("point 7 Excuted. standby.");
 }
 void point_15()
 {
-  Serial.println("Now execute point 17.");
+  Serial.println("Now execute point 15.");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
   delay(500);
-  move_x_y_parallel(-1250, -2165, 1400);
-  move_z(-2500, 1400);
+  move_z(z_moveDown_distance, 1400);
+  move_x_y_parallel(half_distance_at_45, half_distance_at_45, 1400);
   delay(2000);
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  Serial.println("point 17 Excuted. standby.");
+  Serial.println("point 15 Excuted. standby.");
 }
