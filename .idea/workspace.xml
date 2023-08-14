@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="88315cc2-3dfa-47f5-b69f-054b305260d7" name="Changes" comment="add hand center detect">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/haptic-device_mega2560/hand_rec_cv.py" beforeDir="false" afterPath="$PROJECT_DIR$/haptic-device_mega2560/hand_rec_cv.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/haptic-device_mega2560/haptic-device_mega2560.ino" beforeDir="false" afterPath="$PROJECT_DIR$/haptic-device_mega2560/haptic-device_mega2560.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -82,7 +81,7 @@
       <workItem from="1689272046514" duration="4083000" />
       <workItem from="1689964988693" duration="661000" />
       <workItem from="1691094423371" duration="1553000" />
-      <workItem from="1691604116520" duration="1301000" />
+      <workItem from="1691604116520" duration="3108000" />
     </task>
     <task id="LOCAL-00001" summary="add hand center detect">
       <created>1689027459872</created>
@@ -114,6 +113,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="add hand center detect" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ramp1_4_mega2560$hand_rec_cv.coverage" NAME="hand_rec_cv Coverage Results" MODIFIED="1691610514084" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/haptic-device_mega2560" />
+    <SUITE FILE_PATH="coverage/ramp1_4_mega2560$hand_rec_cv.coverage" NAME="hand_rec_cv Coverage Results" MODIFIED="1692039214748" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/haptic-device_mega2560" />
   </component>
 </project>
