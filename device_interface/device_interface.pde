@@ -1,12 +1,18 @@
 import processing.serial.*;
+import controlP5.*;
+
+ControlP5 cp5;
 
 Serial myPort;
 String val;
 float background_color ;
+public int move_distance = 0;
 // ====================================
 // The screen size ratio must be 4:5!!!
-int screen_x = 600;
-int screen_y = 750;
+// Solution for MAC is 600 * 750
+// Full scale is 1200 * 1500
+int screen_x = 1200;
+int screen_y = 1500;
 // ====================================
 float ratio = screen_x / 1200.0;
 boolean xLeft = false;
@@ -52,9 +58,10 @@ boolean dynamic_7 = false;
 boolean dynamic_8 = false;
 boolean dynamic_9 = false;
 boolean dynamic_10 = false;
-
-
-
+boolean motor_start = false;
+boolean motor_stop = false;
+boolean home = false;
+boolean show_current_location = false;
 
 
 
@@ -69,26 +76,45 @@ void setup() {
   log_section();
   point_selection();
   pattern_selection();
-  // myPort = new Serial (this, "COM3", 115200);
+  myPort = new Serial (this, "COM3", 115200);
 }
 
 
 void draw() {
   update_status(mouseX, mouseY);
   // Expand array size to the number of bytes you expect
-  // byte[] inBuffer = new byte[60];
-  //if (myPort.available() > 0) {
-  //  myPort.readBytesUntil(10, inBuffer);
-  //  String myString = new String(inBuffer);
-  //  println(myString);
-  //}
+  byte[] inBuffer = new byte[60];
+  if (myPort.available() > 0) {
+    myPort.readBytesUntil(10, inBuffer);
+    String myString = new String(inBuffer);
+    println(myString);
+  }
 }
 
 
 void xyz_movement_section() {
+  noStroke();
+  cp5 = new ControlP5(this);
+  cp5.addNumberbox("numberbox")
+    .setPosition(250*ratio, 30*ratio)
+    .setSize(200, 60)
+    .setScrollSensitivity(1.1)
+    .setValue(200);
+    
   fill(255, 255, 255);
   textSize(40*ratio);
   text("Move X-Y-Z", 40*ratio, 60*ratio);
+  rect(550*ratio, 10*ratio, 120*ratio, 80*ratio, 8*ratio);
+  rect(700*ratio, 10*ratio, 120*ratio, 80*ratio, 8*ratio);
+  rect(850*ratio, 10*ratio, 120*ratio, 80*ratio, 8*ratio);
+  rect(1000*ratio, 10*ratio, 120*ratio, 80*ratio, 8*ratio);
+  textSize(30*ratio);
+  fill(0);
+  text("Home", 570*ratio, 60*ratio);
+  text("Location", 705*ratio, 60*ratio);
+  text("Start", 880*ratio, 60*ratio);
+  text("Stop", 1030*ratio, 60*ratio);
+  fill(255, 255, 255);
   textSize(50*ratio);
   text("X", 40*ratio, 200*ratio);
   text("Y", 440*ratio, 200*ratio);
@@ -264,6 +290,10 @@ void update_status(int x, int y) {
   dynamic_8 = test_rec(910*ratio, 1240*ratio, 200*ratio, 100*ratio);
   dynamic_9 = test_rec(650*ratio, 1360*ratio, 200*ratio, 100*ratio);
   dynamic_10 = test_rec(910*ratio, 1360*ratio, 200*ratio, 100*ratio);
+  motor_start = test_rec(850*ratio, 10*ratio, 120*ratio, 80*ratio);
+  motor_stop = test_rec(1000*ratio, 10*ratio, 120*ratio, 80*ratio);
+  home = test_rec(550*ratio, 10*ratio, 120*ratio, 80*ratio);
+  show_current_location = test_rec(700*ratio, 10*ratio, 120*ratio, 80*ratio);
 }
 
 boolean test_rec(float x, float y, float width, float height) {
@@ -285,29 +315,43 @@ boolean overCircle(float x, float y, float diameter) {
   }
 }
 
+void numberbox(int value){
+  move_distance = value;
+}
+
 void mousePressed() {
   if (xLeft) {
-    println("xLeft");
+    myPort.write("x," + move_distance);
   } else if (xRight) {
     println("xRight");
+    myPort.write("x,-" + move_distance);
   } else if (yLeft) {
     println("yFront");
+    myPort.write("y," + move_distance);
   } else if (yRight) {
     println("yBack");
+    myPort.write("y,-" + move_distance);
   } else if (zLeft) {
     println("zUp");
+    myPort.write("z," + move_distance);
   } else if (zRight) {
     println("zDown");
+    myPort.write("z,-" + move_distance);
   } else if (logCenterPoint) {
     println("logCenterPoint");
+    myPort.write("log xyz");
   } else if (l) {
     println("l");
+    myPort.write("x,6000");
   } else if (r) {
     println("r");
+    myPort.write("x,-6000");
   } else if (f) {
     println("f");
+    myPort.write("y,-6000");
   } else if (b) {
     println("b");
+    myPort.write("y,6000");
   } else if (logCenterZ) {
     println("logCenterZ");
   } else if (logLeftZ) {
@@ -372,5 +416,42 @@ void mousePressed() {
     println("dynamic_9");
   } else if (dynamic_10) {
     println("dynamic_10");
+  } else if (home) {
+    println("home");
+    myPort.write("home");
+  } else if (show_current_location) {
+    println("Show current location");
+    myPort.write("current location");
+  } else if (motor_start) {
+    println("Start motors");
+    myPort.write("start");
+  } else if (motor_stop) {
+    println("Stop motors");
+    myPort.write("stop");
+  }
+}
+
+
+void keyPressed()
+{
+  if (key == CODED)
+  {
+    if (keyCode == LEFT)
+    {
+      println("LLLLL");
+      myPort.write("x,25");
+    } else if (keyCode == RIGHT)
+    {
+      println("RRRRR");
+      myPort.write("x,-25");
+    } else if (keyCode == UP)
+    {
+      println("FFFFF");
+      myPort.write("y,25");
+    } else if (keyCode == DOWN)
+    {
+      println("BBBBB");
+      myPort.write("y,-25");
+    }
   }
 }
