@@ -8,11 +8,10 @@ String val;
 float background_color ;
 public int move_distance = 0;
 // ====================================
-// The screen size ratio must be 4:5!!!
-// Solution for MAC is 600 * 750
-// Full scale is 1200 * 1500
-int screen_x = 1200;
-int screen_y = 1500;
+// Solution for MAC is 600 * 900
+// Full scale is 1200 * 1800
+int screen_x = 600;
+int screen_y = 900;
 // ====================================
 float ratio = screen_x / 1200.0;
 boolean xLeft = false;
@@ -62,6 +61,11 @@ boolean motor_start = false;
 boolean motor_stop = false;
 boolean home = false;
 boolean show_current_location = false;
+// ====================================
+IntList static_point_list = new IntList();
+IntList pattern_list = new IntList();
+int m_index = 0;
+int n_index = 0;
 
 
 
@@ -76,19 +80,20 @@ void setup() {
   log_section();
   point_selection();
   pattern_selection();
-  myPort = new Serial (this, "COM3", 115200);
+  one_click();
+  //myPort = new Serial (this, "COM3", 115200);
 }
 
 
 void draw() {
   update_status(mouseX, mouseY);
   // Expand array size to the number of bytes you expect
-  byte[] inBuffer = new byte[60];
-  if (myPort.available() > 0) {
-    myPort.readBytesUntil(10, inBuffer);
-    String myString = new String(inBuffer);
-    println(myString);
-  }
+  //byte[] inBuffer = new byte[60];
+  //if (myPort.available() > 0) {
+  //  myPort.readBytesUntil(10, inBuffer);
+  //  String myString = new String(inBuffer);
+  //  println(myString);
+  //}
 }
 
 
@@ -96,11 +101,14 @@ void xyz_movement_section() {
   noStroke();
   cp5 = new ControlP5(this);
   cp5.addNumberbox("numberbox")
-    .setPosition(250*ratio, 30*ratio)
-    .setSize(200, 60)
+    .setColorBackground(color(255))
+    .setColorValueLabel(color(0))
+    .setColorLabel(255)
+    .setPosition(250*ratio, 20*ratio)
+    .setSize(int(200*ratio), int(60*ratio))
     .setScrollSensitivity(1.1)
     .setValue(200);
-    
+
   fill(255, 255, 255);
   textSize(40*ratio);
   text("Move X-Y-Z", 40*ratio, 60*ratio);
@@ -125,6 +133,7 @@ void xyz_movement_section() {
   rect(640*ratio, 135*ratio, 100*ratio, 100*ratio, 8*ratio);
   rect(900*ratio, 135*ratio, 100*ratio, 100*ratio, 8*ratio);
   rect(1040*ratio, 135*ratio, 100*ratio, 100*ratio, 8*ratio);
+  stroke(6);
   drawArrow(180*ratio, 185*ratio, 60*ratio, 180, 5*ratio);
   drawArrow(260*ratio, 185*ratio, 60*ratio, 0, 5*ratio);
   drawArrow(550*ratio, 215*ratio, 60*ratio, 270, 5*ratio);
@@ -201,7 +210,8 @@ void point_selection() {
   circle(202*ratio, 1263*ratio, 50*ratio);
   circle(113*ratio, 1352*ratio, 50*ratio);
   fill(255, 255, 255);
-  rect(595*ratio, 780*ratio, 10*ratio, 920*ratio);
+  rect(595*ratio, 780*ratio, 10*ratio, 700*ratio);
+  rect(0*ratio, 1480*ratio, 1200*ratio, 10*ratio);
 }
 
 
@@ -233,6 +243,127 @@ void pattern_selection() {
   text("10", 990*ratio, 1415*ratio);
 }
 
+
+
+void one_click() {
+  noStroke();
+  int myColor = color(255);
+  int textColor = color(51);
+  cp5 = new ControlP5(this);
+  fill(255);
+  // create a new button with name 'buttonA'
+  cp5.addButton("GenerateList1")
+    .setColorBackground(myColor)
+    .setColorLabel(textColor)
+    .setColorActive(color(127, 255, 212))
+    .setColorForeground(color(175))
+    .setPosition(40*ratio, 1500*ratio)
+    .setSize(int(200*ratio), int(50*ratio))
+    .addCallback(new CallbackListener() {
+    public void controlEvent(CallbackEvent theEvent) {
+      if (theEvent.getAction()==ControlP5.ACTION_BROADCAST) {
+        generate_random_list_1();
+      }
+    }
+  }
+  )
+  ;
+
+  // and add another 2 buttons
+  cp5.addButton("Next_Point")
+    .setColorBackground(myColor)
+    .setColorLabel(textColor)
+    .setColorActive(color(127, 255, 212))
+    .setColorForeground(color(175))
+    .setValue(0)
+    .setPosition(340*ratio, 1500*ratio)
+    .setSize(int(200*ratio), int(50*ratio))
+    .addCallback(new CallbackListener() {
+    public void controlEvent(CallbackEvent theEvent) {
+      if (theEvent.getAction()==ControlP5.ACTION_BROADCAST) {
+        serial_write_next_point();
+      }
+    }
+  }
+  )
+  ;
+
+  cp5.addButton("GenerateList2")
+    .setColorBackground(myColor)
+    .setColorLabel(textColor)
+    .setColorActive(color(127, 255, 212))
+    .setColorForeground(color(175))
+    .setValue(0)
+    .setPosition(640*ratio, 1500*ratio)
+    .setSize(int(200*ratio), int(50*ratio))
+    .addCallback(new CallbackListener() {
+    public void controlEvent(CallbackEvent theEvent) {
+      if (theEvent.getAction()==ControlP5.ACTION_BROADCAST) {
+        generate_random_list_2();
+      }
+    }
+  }
+  )
+  ;
+
+  cp5.addButton("Next_Pattern")
+    .setColorBackground(myColor)
+    .setColorLabel(textColor)
+    .setColorActive(color(127, 255, 212))
+    .setColorForeground(color(175))
+    .setValue(0)
+    .setPosition(940*ratio, 1500*ratio)
+    .setSize(int(200*ratio), int(50*ratio))
+    .addCallback(new CallbackListener() {
+    public void controlEvent(CallbackEvent theEvent) {
+      if (theEvent.getAction()==ControlP5.ACTION_BROADCAST) {
+        serial_write_next_pattern();
+      }
+    }
+  }
+  )
+  ;
+}
+
+
+
+void generate_random_list_1() {
+  static_point_list = new IntList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
+  static_point_list.shuffle();
+  println(static_point_list);
+}
+
+void generate_random_list_2() {
+  pattern_list = new IntList(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
+  pattern_list.shuffle();
+  println(pattern_list);
+}
+
+void serial_write_next_point() {
+  if (static_point_list.size() != 0) {
+    if (m_index > 15) {
+      m_index = 0;
+    }
+    println(static_point_list.get(m_index));
+    m_index = m_index + 1;
+  }
+  else{
+    println("Please generate the list first!!!");
+  }
+}
+
+void serial_write_next_pattern() {
+  if (pattern_list.size() != 0) {
+    if (n_index > 9) {
+      n_index = 0;
+    }
+    println(pattern_list.get(n_index));
+    n_index = n_index + 1;
+  }
+  else{
+    println("Please generate the list first!!!");
+  }
+}
 
 void drawArrow(float cx, float cy, float len, float angle, float w) {
   strokeWeight(w);
@@ -315,7 +446,7 @@ boolean overCircle(float x, float y, float diameter) {
   }
 }
 
-void numberbox(int value){
+void numberbox(int value) {
   move_distance = value;
 }
 
