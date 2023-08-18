@@ -24,11 +24,20 @@ const int full_distance = 6000;
 const int half_distance = 3000;
 const int full_distance_at_45 = 4242;
 const int half_distance_at_45 = 2121;
-long adj_x_center = 0;
-long adj_y_center = 0;
-long adj_z_center = 0;
-long adj_z_center_low = 0;
-long z_move_distance = 0;
+long adj_x_center = -12000;
+long adj_y_center = -12000;
+long adj_z_center = -1000;
+long adj_z_center_low = -1000;
+long adj_z_left_low = -1000;
+long adj_z_right_low = -1000;
+long adj_z_front_low = -1000;
+long adj_z_back_low = -1000;
+long z_center_move_distance = 0;
+long z_left_move_distance = 0;
+long z_right_move_distance = 0;
+long z_front_move_distance = 0;
+long z_back_move_distance = 0;
+boolean z_calibration = false;
 String incomingString = "0";
 
 AccelStepper myStepper_x(AccelStepper::DRIVER, x_Step, x_Dir, true);
@@ -82,7 +91,7 @@ void z_intr()
 {
   static unsigned long last_interrupt_time = 0;
   unsigned long interrupt_time = millis();
-  if (interrupt_time - last_interrupt_time > 900)
+  if (interrupt_time - last_interrupt_time > 600)
   {
     myStepper_z.setSpeed(0);
     z_home = true;
@@ -100,11 +109,11 @@ void setup()
   myStepper_x.setAcceleration(100);
   myStepper_y.setAcceleration(100);
   myStepper_z.setAcceleration(100);
-  pin_init();
-  initial_home();
+  pin_init();        // Initial the pin output functionalities.
+  initial_to_zero(); // Find the zero position.
   delay(1000);
   Serial.println("Begin moving to the center point.");
-  move_to_center(x_center_point, y_center_point, z_center_point);
+  move_to_center(x_center_point, y_center_point, z_center_point); // Move to the pre-set center point.
   Serial.println("System ready!!!");
 }
 
@@ -113,14 +122,14 @@ void loop()
   if (Serial.available())
   {
     incomingString = Serial.readString();
-    if (incomingString == "stop")
+    if (incomingString == "stop motors")
     {
       digitalWrite(y_Enable, HIGH);
       digitalWrite(x_Enable, HIGH);
       digitalWrite(z_Enable, HIGH);
       Serial.println("All motors are shutted down!");
     }
-    else if (incomingString == "start")
+    else if (incomingString == "start motors")
     {
       digitalWrite(y_Enable, LOW);
       digitalWrite(x_Enable, LOW);
@@ -131,15 +140,35 @@ void loop()
     {
       log_adjust_center_point();
     }
-    else if (incomingString == "log z lowest point")
+    else if (incomingString == "log center z lowest point")
     {
-      log_z_lowest_point();
+      log_center_z_lowest_point();
     }
-    else if (incomingString == "home")
+    else if (incomingString == "log left z lowest point")
+    {
+      log_left_z_lowest_point();
+    }
+    else if (incomingString == "log right z lowest point")
+    {
+      log_right_z_lowest_point();
+    }
+    else if (incomingString == "log front z lowest point")
+    {
+      log_front_z_lowest_point();
+    }
+    else if (incomingString == "log back z lowest point")
+    {
+      log_back_z_lowest_point();
+    }
+    else if (incomingString == "pre-set home")
     {
       move_to_center(x_center_point, y_center_point, z_center_point);
     }
-    else if (incomingString == "current location")
+    else if (incomingString == "adjusted home")
+    {
+      move_to_center(adj_x_center, adj_y_center, adj_z_center);
+    }
+    else if (incomingString == "show current location")
     {
       show_current_location();
     }
@@ -154,10 +183,10 @@ void loop()
 
     Serial.println("Standby...");
   }
-  delay(1500);
+  delay(500);
 }
 
-void initial_home()
+void initial_to_zero()
 {
   myStepper_y.setSpeed(1250); // Positive speed will move to zero point, negative point will move to oppisite direction.
   myStepper_x.setSpeed(1250);
@@ -218,15 +247,15 @@ void adjust_probe_position(String incomingString)
 void points_select(String incomingString)
 {
   Serial.println(incomingString);
-  if (adj_x_center == 0 || adj_y_center == 0 || adj_z_center == 0)
+  if (adj_x_center == -12000 || adj_y_center == -12000)
   {
     Serial.println("Please calbiate and log x y z postion first!");
   }
-  if (adj_z_center_low == 0)
+  if (z_calibration == false)
   {
     Serial.println("Please calbiate the lowest z postion first!");
   }
-  if (adj_z_center_low != 0 && adj_x_center != 0 && adj_y_center != 0 && adj_z_center != 0)
+  if (z_calibration == true && adj_x_center != -12000 && adj_y_center != -12000)
   {
     int temp = incomingString.toInt();
     Serial.print("Incoming point: ");
@@ -344,7 +373,6 @@ void move_to_center(long x_c, long y_c, long z_c)
   }
   Serial.println("Probe at the center position.");
   show_current_location();
-  
 }
 
 void log_adjust_center_point()
@@ -356,14 +384,140 @@ void log_adjust_center_point()
   show_current_location();
 }
 
-void log_z_lowest_point()
+void log_center_z_lowest_point()
 {
   adj_z_center_low = myStepper_z.currentPosition();
-  z_move_distance = adj_z_center_low - adj_z_center;
-  Serial.println("Z axis lowest point logged!");
-  Serial.print("Z axis movement distance is ");
-  Serial.println(z_move_distance);
+  z_center_move_distance = adj_z_center_low - adj_z_center;
+  Serial.println("Z axis center lowest point logged!");
+  Serial.print("Z axis center movement distance is ");
+  Serial.println(z_center_move_distance);
+  Serial.print(z_center_move_distance);
+  Serial.print(',');
+  Serial.print(z_left_move_distance);
+  Serial.print(',');
+  Serial.print(z_right_move_distance);
+  Serial.print(',');
+  Serial.print(z_front_move_distance);
+  Serial.print(',');
+  Serial.println(z_back_move_distance);
+
   show_current_location();
+  if (z_center_move_distance == 0 || z_left_move_distance == 0 || z_right_move_distance == 0 || z_front_move_distance == 0 || z_back_move_distance == 0)
+  {
+    z_calibration = false;
+  }
+  else
+  {
+    z_calibration = true;
+  }
+}
+
+void log_left_z_lowest_point()
+{
+  adj_z_left_low = myStepper_z.currentPosition();
+  z_left_move_distance = adj_z_left_low - adj_z_center;
+  Serial.println("Z axis left center lowest point logged!");
+  Serial.print("Z axis left center movement distance is ");
+  Serial.println(z_left_move_distance);
+  Serial.print(z_center_move_distance);
+  Serial.print(',');
+  Serial.print(z_left_move_distance);
+  Serial.print(',');
+  Serial.print(z_right_move_distance);
+  Serial.print(',');
+  Serial.print(z_front_move_distance);
+  Serial.print(',');
+  Serial.println(z_back_move_distance);
+  show_current_location();
+  if (z_center_move_distance == 0 || z_left_move_distance == 0 || z_right_move_distance == 0 || z_front_move_distance == 0 || z_back_move_distance == 0)
+  {
+    z_calibration = false;
+  }
+  else
+  {
+    z_calibration = true;
+  }
+}
+
+void log_right_z_lowest_point()
+{
+  adj_z_right_low = myStepper_z.currentPosition();
+  z_right_move_distance = adj_z_right_low - adj_z_center;
+  Serial.println("Z axis right lowest point logged!");
+  Serial.print("Z axis right movement distance is ");
+  Serial.println(z_right_move_distance);
+  Serial.print(z_center_move_distance);
+  Serial.print(',');
+  Serial.print(z_left_move_distance);
+  Serial.print(',');
+  Serial.print(z_right_move_distance);
+  Serial.print(',');
+  Serial.print(z_front_move_distance);
+  Serial.print(',');
+  Serial.println(z_back_move_distance);
+  show_current_location();
+  if (z_center_move_distance == 0 || z_left_move_distance == 0 || z_right_move_distance == 0 || z_front_move_distance == 0 || z_back_move_distance == 0)
+  {
+    z_calibration = false;
+  }
+  else
+  {
+    z_calibration = true;
+  }
+}
+
+void log_front_z_lowest_point()
+{
+  adj_z_front_low = myStepper_z.currentPosition();
+  z_front_move_distance = adj_z_front_low - adj_z_center;
+  Serial.println("Z axis front lowest point logged!");
+  Serial.print("Z axis front movement distance is ");
+  Serial.println(z_front_move_distance);
+  Serial.print(z_center_move_distance);
+  Serial.print(',');
+  Serial.print(z_left_move_distance);
+  Serial.print(',');
+  Serial.print(z_right_move_distance);
+  Serial.print(',');
+  Serial.print(z_front_move_distance);
+  Serial.print(',');
+  Serial.println(z_back_move_distance);
+  show_current_location();
+  if (z_center_move_distance == 0 || z_left_move_distance == 0 || z_right_move_distance == 0 || z_front_move_distance == 0 || z_back_move_distance == 0)
+  {
+    z_calibration = false;
+  }
+  else
+  {
+    z_calibration = true;
+  }
+}
+
+void log_back_z_lowest_point()
+{
+  adj_z_back_low = myStepper_z.currentPosition();
+  z_back_move_distance = adj_z_back_low - adj_z_center;
+  Serial.println("Z axis back lowest point logged!");
+  Serial.print("Z axis back movement distance is ");
+  Serial.println(z_back_move_distance);
+  Serial.print(z_center_move_distance);
+  Serial.print(',');
+  Serial.print(z_left_move_distance);
+  Serial.print(',');
+  Serial.print(z_right_move_distance);
+  Serial.print(',');
+  Serial.print(z_front_move_distance);
+  Serial.print(',');
+  Serial.println(z_back_move_distance);
+  show_current_location();
+  if (z_center_move_distance == 0 || z_left_move_distance == 0 || z_right_move_distance == 0 || z_front_move_distance == 0 || z_back_move_distance == 0)
+  {
+    z_calibration = false;
+  }
+  else
+  {
+    z_calibration = true;
+  }
 }
 
 long cal_speed_dir(long target_pos, long current_pos, int abs_speed)
@@ -482,7 +636,6 @@ void point_16()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("point 16 Excuted. standby.");
 }
-
 void point_8()
 {
   Serial.println("Now execute point 8.");
@@ -495,7 +648,6 @@ void point_8()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("point 8 Excuted. standby.");
 }
-
 void point_1()
 {
   Serial.println("Now execute point 1.");
@@ -508,7 +660,6 @@ void point_1()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("point 1 Excuted. standby.");
 }
-
 void point_9()
 {
   Serial.println("Now execute point 9.");
@@ -521,7 +672,6 @@ void point_9()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("point 9 Excuted. standby.");
 }
-
 void point_2()
 {
   Serial.println("Now execute point 10.");
@@ -534,7 +684,6 @@ void point_2()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("point 2 Excuted. standby.");
 }
-
 void point_10()
 {
   Serial.println("Now execute point 10.");
@@ -547,7 +696,6 @@ void point_10()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("point 10 Excuted. standby.");
 }
-
 void point_3()
 {
   Serial.println("Now execute point 3.");
@@ -560,7 +708,6 @@ void point_3()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("point 3 Excuted. standby.");
 }
-
 void point_11()
 {
   Serial.println("Now execute point 11.");
@@ -573,7 +720,6 @@ void point_11()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("point 11 Excuted. standby.");
 }
-
 void point_4()
 {
   Serial.println("Now execute point 4.");
@@ -670,7 +816,6 @@ void point_15()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("point 15 Excuted. standby.");
 }
-
 void big_left_curve()
 {
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
@@ -678,7 +823,7 @@ void big_left_curve()
   long start_point_y = adj_y_center - full_distance;
   move_y(-full_distance, 1400);
   delay(500);
-  move_z(z_move_distance, 1400);
+  move_z(z_center_move_distance, 1400);
   long pre_x_internal_point = adj_x_center;
   long pre_y_internal_point = adj_y_center - full_distance;
   double step = PI / 1000;
@@ -725,14 +870,13 @@ void big_left_curve()
     pre_y_internal_point = y_internal_point_1;
   }
 }
-
 void h_left()
 {
   Serial.println("Now execute horizonal left");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   move_x_y_parallel(-4242, 4242, 1400);
   delay(500);
-  move_z(z_move_distance, 1400);
+  move_z(z_center_move_distance, 1400);
   delay(100);
   move_x(6000, 1400);
   delay(500);
@@ -746,7 +890,7 @@ void h_right()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   move_x_y_parallel(4242, -4242, 1400);
   delay(500);
-  move_z(z_move_distance, 1400);
+  move_z(z_center_move_distance, 1400);
   delay(100);
   move_x(-6000, 1400);
   delay(500);
@@ -760,7 +904,7 @@ void v_forward()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   move_x_y_parallel(-2121, -2121, 1400);
   delay(500);
-  move_z(z_move_distance, 1400);
+  move_z(z_center_move_distance, 1400);
   delay(100);
   move_y(3000, 1400);
   delay(500);
@@ -774,7 +918,7 @@ void v_backward()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   move_x_y_parallel(2121, 2121, 1400);
   delay(500);
-  move_z(z_move_distance, 1400);
+  move_z(z_center_move_distance, 1400);
   delay(100);
   move_y(-3000, 1400);
   delay(500);
@@ -782,24 +926,22 @@ void v_backward()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("Virtical backward executed");
 }
-
 void multi_fb()
 {
   Serial.println("Now execute virtical forward and backward");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  move_z(z_move_distance, 1400);
+  move_z(z_center_move_distance, 1400);
   delay(100);
   move_y(6000, 1400);
   delay(50);
   move_y(-6000, 1400);
   Serial.println("Executed virtical forward and backward");
 }
-
 void multi_incomplete_t()
 {
   Serial.println("Now execute mutiple direction 1");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  move_z(z_move_distance, 1400);
+  move_z(z_center_move_distance, 1400);
   delay(100);
   move_x_y_parallel(-4242, 4242, 989);
   delay(50);
@@ -829,7 +971,7 @@ void multi_complete_t()
 {
   Serial.println("Now execute mutiple direction 2");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  move_z(z_move_distance, 1400);
+  move_z(z_center_move_distance, 1400);
   delay(100);
   move_x_y_parallel(-4242, 4242, 989);
   delay(50);

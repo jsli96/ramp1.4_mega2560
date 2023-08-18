@@ -81,19 +81,18 @@ void setup() {
   point_selection();
   pattern_selection();
   one_click();
-  //myPort = new Serial (this, "COM3", 115200);
+  myPort = new Serial (this, "COM3", 115200);
 }
 
 
 void draw() {
   update_status(mouseX, mouseY);
-  // Expand array size to the number of bytes you expect
-  //byte[] inBuffer = new byte[60];
-  //if (myPort.available() > 0) {
-  //  myPort.readBytesUntil(10, inBuffer);
-  //  String myString = new String(inBuffer);
-  //  println(myString);
-  //}
+  byte[] inBuffer = new byte[60];
+  if (myPort.available() > 0) {
+    myPort.readBytesUntil(10, inBuffer);
+    String myString = new String(inBuffer);
+    println(myString);
+  }
 }
 
 
@@ -452,6 +451,7 @@ void numberbox(int value) {
 
 void mousePressed() {
   if (xLeft) {
+    println("xLeft");
     myPort.write("x," + move_distance);
   } else if (xRight) {
     println("xRight");
@@ -479,54 +479,76 @@ void mousePressed() {
     myPort.write("x,-6000");
   } else if (f) {
     println("f");
-    myPort.write("y,-6000");
+    myPort.write("y,6000");
   } else if (b) {
     println("b");
-    myPort.write("y,6000");
+    myPort.write("y,-6000");
   } else if (logCenterZ) {
     println("logCenterZ");
+    myPort.write("log center z lowest point");
   } else if (logLeftZ) {
     println("logLeftZ");
+    myPort.write("log left z lowest point");
   } else if (logRightZ) {
     println("logRightZ");
+    myPort.write("log right z lowest point");
   } else if (logFrontZ) {
     println("logFrontZ");
+    myPort.write("log front z lowest point");
   } else if (logBackZ) {
     println("logBackZ");
+    myPort.write("log back z lowest point");
   } else if (static_center) {
     println("static_center");
+    myPort.write("adjusted home");
   } else if (static_1) {
     println("static_1");
+    myPort.write("1");
   } else if (static_2) {
     println("static_2");
+    myPort.write("2");
   } else if (static_3) {
     println("static_3");
+    myPort.write("3");
   } else if (static_4) {
     println("static_4");
+    myPort.write("4");
   } else if (static_5) {
     println("static_5");
+    myPort.write("5");
   } else if (static_6) {
     println("static_6");
+    myPort.write("6");
   } else if (static_7) {
     println("static_7");
+    myPort.write("7");
   } else if (static_8) {
     println("static_8");
+    myPort.write("8");
   } else if (static_9) {
     println("static_9");
+    myPort.write("9");
   } else if (static_10) {
     println("static_10");
+    myPort.write("10");
   } else if (static_11) {
     println("static_11");
+    myPort.write("11");
   } else if (static_12) {
     println("static_12");
+    myPort.write("13");
   } else if (static_13) {
     println("static_13");
+    myPort.write("13");
   } else if (static_14) {
     println("static_14");
+    myPort.write("14");
   } else if (static_15) {
     println("static_15");
+    myPort.write("15");
   } else if (static_16) {
     println("static_16");
+    myPort.write("16");
   } else if (dynamic_1) {
     println("dynamic_1");
   } else if (dynamic_2) {
@@ -549,16 +571,16 @@ void mousePressed() {
     println("dynamic_10");
   } else if (home) {
     println("home");
-    myPort.write("home");
+    myPort.write("pre-set home");
   } else if (show_current_location) {
     println("Show current location");
-    myPort.write("current location");
+    myPort.write("show current location");
   } else if (motor_start) {
     println("Start motors");
-    myPort.write("start");
+    myPort.write("start motors");
   } else if (motor_stop) {
     println("Stop motors");
-    myPort.write("stop");
+    myPort.write("stop motors");
   }
 }
 
