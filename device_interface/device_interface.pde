@@ -343,7 +343,9 @@ void serial_write_next_point() {
     if (m_index > 15) {
       m_index = 0;
     }
-    println(static_point_list.get(m_index));
+    int tmp= static_point_list.get(m_index);
+    println(tmp);
+    myPort.write(str(tmp));
     m_index = m_index + 1;
   }
   else{
@@ -536,7 +538,7 @@ void mousePressed() {
     myPort.write("11");
   } else if (static_12) {
     println("static_12");
-    myPort.write("13");
+    myPort.write("12");
   } else if (static_13) {
     println("static_13");
     myPort.write("13");
@@ -571,7 +573,7 @@ void mousePressed() {
     println("dynamic_10");
   } else if (home) {
     println("home");
-    myPort.write("pre-set home");
+    myPort.write("adjusted home");
   } else if (show_current_location) {
     println("Show current location");
     myPort.write("show current location");
