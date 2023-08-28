@@ -14,7 +14,7 @@
 #define z_Dir 48
 #define z_Stop 19
 #define vib_motor_1 16
-#define vib_motor_2 17
+
 
 bool x_home = false;
 bool y_home = false;
@@ -64,9 +64,7 @@ void pin_init()
   pinMode(z_Stop, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(z_Stop), z_intr, FALLING); // Stop pin interrupt
   pinMode(vib_motor_1, OUTPUT);
-  digitalWrite(vib_motor_1, LOW);
-  pinMode(vib_motor_2, OUTPUT);
-  digitalWrite(vib_motor_2, LOW);
+  digitalWrite(vib_motor_1, HIGH);
   // Initial the motor and return to the zero.
   initial_to_zero(); // Find the zero position.
 }
