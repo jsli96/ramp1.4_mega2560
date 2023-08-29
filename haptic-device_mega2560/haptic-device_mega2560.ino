@@ -15,7 +15,6 @@
 #define z_Stop 19
 #define vib_motor_1 16
 
-
 bool x_home = false;
 bool y_home = false;
 bool z_home = false;
@@ -64,7 +63,7 @@ void pin_init()
   pinMode(z_Stop, INPUT_PULLUP);
   attachInterrupt(digitalPinToInterrupt(z_Stop), z_intr, FALLING); // Stop pin interrupt
   pinMode(vib_motor_1, OUTPUT);
-  digitalWrite(vib_motor_1, HIGH);
+  digitalWrite(vib_motor_1, LOW);
   // Initial the motor and return to the zero.
   initial_to_zero(); // Find the zero position.
 }
@@ -296,6 +295,9 @@ void points_select(String incomingString)
     Serial.println(temp);
     switch (temp)
     {
+    case 16:
+      point_16();
+      break;
     case 15:
       point_15();
       break;
@@ -341,9 +343,6 @@ void points_select(String incomingString)
     case 1:
       point_1();
       break;
-    case 16:
-      point_16();
-      break;
     case 21:
       h_left();
       break;
@@ -374,6 +373,87 @@ void points_select(String incomingString)
     case 30:
       big_left_curve();
       break;
+
+      //======================================================================//
+    case 46:
+      point_16_vib();
+      break;
+    case 45:
+      point_15_vib();
+      break;
+    case 44:
+      point_14_vib();
+      break;
+    case 43:
+      point_13_vib();
+      break;
+    case 42:
+      point_12_vib();
+      break;
+    case 41:
+      point_11_vib();
+      break;
+    case 40:
+      point_10_vib();
+      break;
+    case 39:
+      point_9_vib();
+      break;
+    case 38:
+      point_8_vib();
+      break;
+    case 37:
+      point_7_vib();
+      break;
+    case 36:
+      point_6_vib();
+      break;
+    case 35:
+      point_5_vib();
+      break;
+    case 34:
+      point_4_vib();
+      break;
+    case 33:
+      point_3_vib();
+      break;
+    case 32:
+      point_2_vib();
+      break;
+    case 31:
+      point_1_vib();
+      break;
+    case 51:
+      h_left_vib();
+      break;
+    case 52:
+      h_right_vib();
+      break;
+    case 53:
+      v_backward_vib();
+      break;
+    case 54:
+      v_forward_vib();
+      break;
+    case 55:
+      multi_fb_vib();
+      break;
+    case 56:
+      multi_incomplete_t_vib();
+      break;
+    case 57:
+      multi_complete_t_vib();
+      break;
+    case 58:
+      big_left_curve_vib();
+      break;
+    case 59:
+      big_left_curve_vib();
+      break;
+    case 60:
+      big_left_curve_vib();
+      break;
+      //======================================================================//
 
     default:
       Serial.println("Commands not match!");
@@ -667,6 +747,7 @@ void move_x_y_z_in_task(long x_distance, long y_distance, long z_distance)
   }
 }
 
+//=========================Skin stretch patterns=================//
 void point_16()
 {
   Serial.println("Now execute point 16.");
@@ -1069,3 +1150,415 @@ void multi_complete_t()
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("Executed mutiple direction 2");
 }
+//===========================      ENDs      =====================//
+
+//=====================  Vibration tactile patterns  =============//
+void point_16_vib()
+{
+  Serial.println("Now execute point 16 vib.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  move_z(z_moveDown_distance, 1400);
+  digitalWrite(vib_motor_1, HIGH);
+  delay(1000);
+  digitalWrite(vib_motor_1, LOW);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  move_y(full_distance, 1400);
+  int z_adjustment = adj_z_front_low - adj_z_center;
+  move_z(z_adjustment, 1400);
+  digitalWrite(vib_motor_1, HIGH);
+  delay(1000);
+  digitalWrite(vib_motor_1, LOW);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 16 vib Excuted. standby.");
+}
+void point_8_vib()
+{
+  Serial.println("Now execute point 8.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  move_y(half_distance, 1400);
+  // int z_adjustment = adj_z_front_low - adj_z_center_low;
+  // move_x_y_z_in_task(0, half_distance, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 8 Excuted. standby.");
+}
+void point_1_vib()
+{
+  Serial.println("Now execute point 1.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  int z_adjustment = ((adj_z_front_low + adj_z_right_low) / 2) - adj_z_center_low;
+  move_x_y_z_in_task(-full_distance_at_45, full_distance_at_45, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 1 Excuted. standby.");
+}
+void point_9_vib()
+{
+  Serial.println("Now execute point 9.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  move_x_y_parallel(-half_distance_at_45, half_distance_at_45, 1400);
+  // int z_adjustment = ((adj_z_front_low + adj_z_right_low) / 2) - adj_z_center_low;
+  // move_x_y_z_in_task(-half_distance_at_45, half_distance_at_45, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 9 Excuted. standby.");
+}
+void point_2_vib()
+{
+  Serial.println("Now execute point 10.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  int z_adjustment = adj_z_right_low - adj_z_center_low;
+  move_x_y_z_in_task(-full_distance, 0, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 2 Excuted. standby.");
+}
+void point_10_vib()
+{
+  Serial.println("Now execute point 10.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  move_x(-half_distance, 1400);
+  // int z_adjustment = adj_z_right_low - adj_z_center_low;
+  // move_x_y_z_in_task(-half_distance, 0, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 10 Excuted. standby.");
+}
+void point_3_vib()
+{
+  Serial.println("Now execute point 3.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  int z_adjustment = ((adj_z_back_low + adj_z_right_low) / 2) - adj_z_center_low;
+  move_x_y_z_in_task(-full_distance_at_45, -full_distance_at_45, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 3 Excuted. standby.");
+}
+void point_11_vib()
+{
+  Serial.println("Now execute point 11.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  move_x_y_parallel(-half_distance_at_45, -half_distance_at_45, 1400);
+  // int z_adjustment = ((adj_z_back_low + adj_z_right_low) / 2) - adj_z_center_low;
+  // move_x_y_z_in_task(-half_distance_at_45, -half_distance_at_45, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 11 Excuted. standby.");
+}
+void point_4_vib()
+{
+  Serial.println("Now execute point 4.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  int z_adjustment = adj_z_back_low - adj_z_center_low;
+  move_x_y_z_in_task(0, -full_distance, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 4 Excuted. standby.");
+}
+void point_12_vib()
+{
+  Serial.println("Now execute point 12.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  move_y(-half_distance_at_45, 1400);
+  // int z_adjustment = adj_z_back_low - adj_z_center_low;
+  // move_x_y_z_in_task(0, -half_distance, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 12 Excuted. standby.");
+}
+void point_5_vib()
+{
+  Serial.println("Now execute point 5.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  int z_adjustment = ((adj_z_back_low + adj_z_left_low) / 2) - adj_z_center_low;
+  move_x_y_z_in_task(full_distance_at_45, -full_distance_at_45, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 5 Excuted. standby.");
+}
+void point_13_vib()
+{
+  Serial.println("Now execute point 13.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  move_x_y_parallel(half_distance_at_45, -half_distance_at_45, 1400);
+  // int z_adjustment = ((adj_z_back_low + adj_z_left_low) / 2) - adj_z_center_low;
+  // move_x_y_z_in_task(half_distance_at_45, -half_distance_at_45, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 13 Excuted. standby.");
+}
+void point_6_vib()
+{
+  Serial.println("Now execute point 6.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  int z_adjustment = adj_z_left_low - adj_z_center_low;
+  move_x_y_z_in_task(full_distance, 0, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 6 Excuted. standby.");
+}
+void point_14_vib()
+{
+  Serial.println("Now execute point 14.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  move_x(half_distance, 1400);
+  // int z_adjustment = adj_z_left_low - adj_z_center_low;
+  // move_x_y_z_in_task(half_distance, 0, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 14 Excuted. standby.");
+}
+void point_7_vib()
+{
+  Serial.println("Now execute point 7.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  int z_adjustment = ((adj_z_front_low + adj_z_left_low) / 2) - adj_z_center_low;
+  move_x_y_z_in_task(full_distance_at_45, full_distance_at_45, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 7 Excuted. standby.");
+}
+void point_15_vib()
+{
+  Serial.println("Now execute point 15.");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  delay(500);
+  move_z(z_moveDown_distance, 1400);
+  move_x_y_parallel(half_distance_at_45, half_distance_at_45, 1400);
+  // int z_adjustment = ((adj_z_front_low + adj_z_left_low) / 2) - adj_z_center_low;
+  // move_x_y_z_in_task(half_distance_at_45, half_distance_at_45, z_adjustment);
+  delay(1200);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("point 15 Excuted. standby.");
+}
+void big_left_curve_vib()
+{
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  long start_point_x = adj_x_center;
+  long start_point_y = adj_y_center - full_distance;
+  move_y(-full_distance, 1400);
+  delay(500);
+  move_z(z_center_move_distance, 1400);
+  long pre_x_internal_point = adj_x_center;
+  long pre_y_internal_point = adj_y_center - full_distance;
+  double step = PI / 1000;
+
+  for (double angle = 0; angle < PI; angle = angle + step)
+  {
+    double x_internal_point_1 = adj_x_center + full_distance * sin(angle);
+    double y_internal_point_1 = adj_y_center - full_distance * cos(angle);
+    double x_move_distance = x_internal_point_1 - pre_x_internal_point;
+    double y_move_distance = y_internal_point_1 - pre_y_internal_point;
+    // Serial.print("x_internal_point_1 = ");
+    // Serial.print(x_internal_point_1);
+    // Serial.print(", y_internal_point_1 = ");
+    // Serial.print(y_internal_point_1);
+    // Serial.print(", x_move_distance = ");
+    // Serial.print(x_move_distance);
+    // Serial.print(", y_move_distance = ");
+    // Serial.println(y_move_distance);
+    // delay(1000);
+    myStepper_x.move(long(x_move_distance));
+    myStepper_y.move(long(y_move_distance));
+    float x_speed;
+    float y_speed;
+    x_speed = sqrt(pow(1400, 2) / (1 + pow((y_move_distance / x_move_distance), 2)));
+    y_speed = sqrt(pow(1400, 2) / (1 + pow((x_move_distance / y_move_distance), 2)));
+    // Serial.print("x_speed = ");
+    // Serial.print(x_speed);
+    // Serial.print(", y_speed = ");
+    // Serial.println(y_speed);
+    while (myStepper_x.distanceToGo() != 0 || myStepper_y.distanceToGo() != 0)
+    {
+      myStepper_x.setSpeed(cal_speed_dir(myStepper_x.currentPosition() + long(x_move_distance), myStepper_x.currentPosition(), x_speed));
+      myStepper_y.setSpeed(cal_speed_dir(myStepper_y.currentPosition() + long(y_move_distance), myStepper_y.currentPosition(), y_speed));
+      if (myStepper_x.distanceToGo() != 0)
+      {
+        myStepper_x.run();
+      }
+      if (myStepper_y.distanceToGo() != 0)
+      {
+        myStepper_y.run();
+      }
+    }
+    pre_x_internal_point = x_internal_point_1;
+    pre_y_internal_point = y_internal_point_1;
+  }
+}
+void h_left_vib()
+{
+  Serial.println("Now execute horizonal left");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  move_x_y_parallel(-4242, 4242, 1400);
+  delay(500);
+  move_z(z_center_move_distance, 1400);
+  delay(100);
+  move_x(6000, 1400);
+  delay(500);
+  move_z(200, 1400);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("Horizonal left executed");
+}
+void h_right_vib()
+{
+  Serial.println("Now execute horizonal right");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  move_x_y_parallel(4242, -4242, 1400);
+  delay(500);
+  move_z(z_center_move_distance, 1400);
+  delay(100);
+  move_x(-6000, 1400);
+  delay(500);
+  move_z(200, 1400);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("Horizonal right executed");
+}
+void v_forward_vib()
+{
+  Serial.println("Now execute virtical forward");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  move_x_y_parallel(-2121, -2121, 1400);
+  delay(500);
+  move_z(z_center_move_distance, 1400);
+  delay(100);
+  move_y(3000, 1400);
+  delay(500);
+  move_z(200, 1400);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("Virtical forward executed");
+}
+void v_backward_vib()
+{
+  Serial.println("Now execute virtical backward");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  move_x_y_parallel(2121, 2121, 1400);
+  delay(500);
+  move_z(z_center_move_distance, 1400);
+  delay(100);
+  move_y(-3000, 1400);
+  delay(500);
+  move_z(200, 1400);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("Virtical backward executed");
+}
+void multi_fb_vib()
+{
+  Serial.println("Now execute virtical forward and backward");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  move_z(z_center_move_distance, 1400);
+  delay(100);
+  move_y(6000, 1400);
+  delay(50);
+  move_y(-6000, 1400);
+  Serial.println("Executed virtical forward and backward");
+}
+void multi_incomplete_t_vib()
+{
+  Serial.println("Now execute mutiple direction 1");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  move_z(z_center_move_distance, 1400);
+  delay(100);
+  move_x_y_parallel(-4242, 4242, 989);
+  delay(50);
+  myStepper_x.move(-long(1758));
+  myStepper_y.move(-long(4242));
+  float x_speed;
+  float y_speed;
+  x_speed = sqrt(pow(1400, 2) / (1 + pow((4242 / 1758), 2)));
+  y_speed = sqrt(pow(1400, 2) / (1 + pow((1758 / 4242), 2)));
+  while (myStepper_x.distanceToGo() != 0 || myStepper_y.distanceToGo() != 0)
+  {
+    myStepper_x.setSpeed(cal_speed_dir(myStepper_x.currentPosition() - long(1758), myStepper_x.currentPosition(), x_speed));
+    myStepper_y.setSpeed(cal_speed_dir(myStepper_y.currentPosition() - long(4242), myStepper_y.currentPosition(), y_speed));
+    if (myStepper_x.distanceToGo() != 0)
+    {
+      myStepper_x.run();
+    }
+    if (myStepper_y.distanceToGo() != 0)
+    {
+      myStepper_y.run();
+    }
+  }
+
+  Serial.println("Executed mutiple direction 1");
+}
+void multi_complete_t_vib()
+{
+  Serial.println("Now execute mutiple direction 2");
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  move_z(z_center_move_distance, 1400);
+  delay(100);
+  move_x_y_parallel(-4242, 4242, 989);
+  delay(50);
+  myStepper_x.move(long(-1758));
+  myStepper_y.move(long(-4242));
+  float x_speed;
+  float y_speed;
+  x_speed = sqrt(pow(1400, 2) / (1 + pow((4242 / 1758), 2)));
+  y_speed = sqrt(pow(1400, 2) / (1 + pow((1758 / 4242), 2)));
+  // Serial.print("x_speed = ");
+  // Serial.print(x_speed);
+  // Serial.print(", y_speed = ");
+  // Serial.println(y_speed);
+  while (myStepper_x.distanceToGo() != 0 || myStepper_y.distanceToGo() != 0)
+  {
+    myStepper_x.setSpeed(cal_speed_dir(myStepper_x.currentPosition() + long(-1758), myStepper_x.currentPosition(), x_speed));
+    myStepper_y.setSpeed(cal_speed_dir(myStepper_y.currentPosition() + long(-4242), myStepper_y.currentPosition(), y_speed));
+    if (myStepper_x.distanceToGo() != 0)
+    {
+      myStepper_x.run();
+    }
+    if (myStepper_y.distanceToGo() != 0)
+    {
+      myStepper_y.run();
+    }
+  }
+  delay(50);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  Serial.println("Executed mutiple direction 2");
+}
+//===========================      ENDs      =====================//

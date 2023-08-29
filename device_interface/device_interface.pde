@@ -61,12 +61,13 @@ boolean motor_start = false;
 boolean motor_stop = false;
 boolean home = false;
 boolean show_current_location = false;
+boolean skin_or_vib_button = false;
 // ====================================
 IntList static_point_list = new IntList();
 IntList pattern_list = new IntList();
 int m_index = 0;
 int n_index = 0;
-
+int skin_vib_choice = 0;
 
 
 void settings() {
@@ -180,8 +181,12 @@ void log_section() {
 }
 
 void point_selection() {
-  fill(255, 255, 255);
   textSize(40*ratio);
+  fill(255, 255, 0);
+  rect(400*ratio, 810*ratio, 150*ratio, 66*ratio, 6*ratio);
+  fill(0);
+  text("Skin", 420*ratio, 850*ratio);
+  fill(255, 255, 255);
   text("Point selection", 40*ratio, 850*ratio);
   strokeWeight(6*ratio);
   stroke(255, 255, 255);
@@ -347,8 +352,7 @@ void serial_write_next_point() {
     println(tmp);
     myPort.write(str(tmp));
     m_index = m_index + 1;
-  }
-  else{
+  } else {
     println("Please generate the list first!!!");
   }
 }
@@ -360,8 +364,7 @@ void serial_write_next_pattern() {
     }
     println(pattern_list.get(n_index));
     n_index = n_index + 1;
-  }
-  else{
+  } else {
     println("Please generate the list first!!!");
   }
 }
@@ -426,6 +429,7 @@ void update_status(int x, int y) {
   motor_stop = test_rec(1000*ratio, 10*ratio, 120*ratio, 80*ratio);
   home = test_rec(550*ratio, 10*ratio, 120*ratio, 80*ratio);
   show_current_location = test_rec(700*ratio, 10*ratio, 120*ratio, 80*ratio);
+  skin_or_vib_button = test_rec(400*ratio, 810*ratio, 150*ratio, 66*ratio);
 }
 
 boolean test_rec(float x, float y, float width, float height) {
@@ -452,6 +456,24 @@ void numberbox(int value) {
 }
 
 void mousePressed() {
+  if (skin_or_vib_button) {
+    if (skin_vib_choice == 0) {
+      println("Change to vib");
+      fill(255, 255, 0);
+      rect(400*ratio, 810*ratio, 150*ratio, 66*ratio, 6*ratio);
+      fill(0);
+      text("Vib", 420*ratio, 850*ratio);
+      skin_vib_choice = 1;
+    } else {
+      println("Change to skin");
+      fill(255, 255, 0);
+      rect(400*ratio, 810*ratio, 150*ratio, 66*ratio, 6*ratio);
+      fill(0);
+      text("Skin", 420*ratio, 850*ratio);
+      skin_vib_choice = 0;
+    }
+  }
+
   if (xLeft) {
     println("xLeft");
     myPort.write("x," + move_distance);
@@ -503,73 +525,141 @@ void mousePressed() {
   } else if (static_center) {
     println("static_center");
     myPort.write("adjusted home");
-  } else if (static_1) {
+  } else if (static_1 && skin_vib_choice == 0) {
     println("static_1");
     myPort.write("1");
-  } else if (static_2) {
+  } else if (static_2 && skin_vib_choice == 0) {
     println("static_2");
     myPort.write("2");
-  } else if (static_3) {
+  } else if (static_3 && skin_vib_choice == 0) {
     println("static_3");
     myPort.write("3");
-  } else if (static_4) {
+  } else if (static_4 && skin_vib_choice == 0) {
     println("static_4");
     myPort.write("4");
-  } else if (static_5) {
+  } else if (static_5 && skin_vib_choice == 0) {
     println("static_5");
     myPort.write("5");
-  } else if (static_6) {
+  } else if (static_6 && skin_vib_choice == 0) {
     println("static_6");
     myPort.write("6");
-  } else if (static_7) {
+  } else if (static_7 && skin_vib_choice == 0) {
     println("static_7");
     myPort.write("7");
-  } else if (static_8) {
+  } else if (static_8 && skin_vib_choice == 0) {
     println("static_8");
     myPort.write("8");
-  } else if (static_9) {
+  } else if (static_9 && skin_vib_choice == 0) {
     println("static_9");
     myPort.write("9");
-  } else if (static_10) {
+  } else if (static_10 && skin_vib_choice == 0) {
     println("static_10");
     myPort.write("10");
-  } else if (static_11) {
+  } else if (static_11 && skin_vib_choice == 0) {
     println("static_11");
     myPort.write("11");
-  } else if (static_12) {
+  } else if (static_12 && skin_vib_choice == 0) {
     println("static_12");
     myPort.write("12");
-  } else if (static_13) {
+  } else if (static_13 && skin_vib_choice == 0) {
     println("static_13");
     myPort.write("13");
-  } else if (static_14) {
+  } else if (static_14 && skin_vib_choice == 0) {
     println("static_14");
     myPort.write("14");
-  } else if (static_15) {
+  } else if (static_15 && skin_vib_choice == 0) {
     println("static_15");
     myPort.write("15");
-  } else if (static_16) {
+  } else if (static_16 && skin_vib_choice == 0) {
     println("static_16");
     myPort.write("16");
-  } else if (dynamic_1) {
+  } else if (dynamic_1 && skin_vib_choice == 0) {
     println("dynamic_1");
-  } else if (dynamic_2) {
+  } else if (dynamic_2 && skin_vib_choice == 0) {
     println("dynamic_2");
-  } else if (dynamic_3) {
+  } else if (dynamic_3 && skin_vib_choice == 0) {
     println("dynamic_3");
-  } else if (dynamic_4) {
+  } else if (dynamic_4 && skin_vib_choice == 0) {
     println("dynamic_4");
-  } else if (dynamic_5) {
+  } else if (dynamic_5 && skin_vib_choice == 0) {
     println("dynamic_5");
-  } else if (dynamic_6) {
+  } else if (dynamic_6 && skin_vib_choice == 0) {
     println("dynamic_6");
-  } else if (dynamic_7) {
+  } else if (dynamic_7 && skin_vib_choice == 0) {
     println("dynamic_7");
-  } else if (dynamic_8) {
+  } else if (dynamic_8 && skin_vib_choice == 0) {
     println("dynamic_8");
-  } else if (dynamic_9) {
+  } else if (dynamic_9 && skin_vib_choice == 0) {
     println("dynamic_9");
-  } else if (dynamic_10) {
+  } else if (dynamic_10 && skin_vib_choice == 0) {
+    println("dynamic_10");
+  } else if (static_1 && skin_vib_choice == 1) {
+    println("static_31_vib");
+    myPort.write("31");
+  } else if (static_2 && skin_vib_choice == 1) {
+    println("static_32");
+    myPort.write("32");
+  } else if (static_3 && skin_vib_choice == 1) {
+    println("static_33");
+    myPort.write("33");
+  } else if (static_4 && skin_vib_choice == 1) {
+    println("static_34");
+    myPort.write("34");
+  } else if (static_5 && skin_vib_choice == 1) {
+    println("static_35");
+    myPort.write("35");
+  } else if (static_6 && skin_vib_choice == 1) {
+    println("static_36");
+    myPort.write("36");
+  } else if (static_7 && skin_vib_choice == 1) {
+    println("static_37");
+    myPort.write("37");
+  } else if (static_8 && skin_vib_choice == 1) {
+    println("static_38");
+    myPort.write("38");
+  } else if (static_9 && skin_vib_choice == 1) {
+    println("static_39");
+    myPort.write("39");
+  } else if (static_10 && skin_vib_choice == 1) {
+    println("static_40");
+    myPort.write("40");
+  } else if (static_11 && skin_vib_choice == 1) {
+    println("static_41");
+    myPort.write("41");
+  } else if (static_12 && skin_vib_choice == 1) {
+    println("static_42");
+    myPort.write("42");
+  } else if (static_13 && skin_vib_choice == 1) {
+    println("static_43");
+    myPort.write("43");
+  } else if (static_14 && skin_vib_choice == 1) {
+    println("static_44");
+    myPort.write("44");
+  } else if (static_15 && skin_vib_choice == 1) {
+    println("static_45");
+    myPort.write("45");
+  } else if (static_16 && skin_vib_choice == 1) {
+    println("static_46");
+    myPort.write("46");
+  } else if (dynamic_1 && skin_vib_choice == 1) {
+    println("dynamic_1");
+  } else if (dynamic_2 && skin_vib_choice == 1) {
+    println("dynamic_2");
+  } else if (dynamic_3 && skin_vib_choice == 1) {
+    println("dynamic_3");
+  } else if (dynamic_4 && skin_vib_choice == 1) {
+    println("dynamic_4");
+  } else if (dynamic_5 && skin_vib_choice == 1) {
+    println("dynamic_5");
+  } else if (dynamic_6 && skin_vib_choice == 1) {
+    println("dynamic_6");
+  } else if (dynamic_7 && skin_vib_choice == 1) {
+    println("dynamic_7");
+  } else if (dynamic_8 && skin_vib_choice == 1) {
+    println("dynamic_8");
+  } else if (dynamic_9 && skin_vib_choice == 1) {
+    println("dynamic_9");
+  } else if (dynamic_10 && skin_vib_choice == 1) {
     println("dynamic_10");
   } else if (home) {
     println("home");
