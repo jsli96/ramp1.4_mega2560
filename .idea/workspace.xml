@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88315cc2-3dfa-47f5-b69f-054b305260d7" name="Changes" comment="add hand center detect">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/haptic-device_mega2560/haptic-device_mega2560.ino" beforeDir="false" afterPath="$PROJECT_DIR$/haptic-device_mega2560/haptic-device_mega2560.ino" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +80,7 @@
       <workItem from="1689272046514" duration="4083000" />
       <workItem from="1689964988693" duration="661000" />
       <workItem from="1691094423371" duration="1553000" />
-      <workItem from="1691604116520" duration="5540000" />
+      <workItem from="1691604116520" duration="6121000" />
     </task>
     <task id="LOCAL-00001" summary="add hand center detect">
       <created>1689027459872</created>
