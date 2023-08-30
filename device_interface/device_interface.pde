@@ -497,16 +497,16 @@ void mousePressed() {
     myPort.write("log xyz");
   } else if (l) {
     println("l");
-    myPort.write("x,6000");
+    myPort.write("x,5000");
   } else if (r) {
     println("r");
-    myPort.write("x,-6000");
+    myPort.write("x,-5000");
   } else if (f) {
     println("f");
-    myPort.write("y,6000");
+    myPort.write("y,5000");
   } else if (b) {
     println("b");
-    myPort.write("y,-6000");
+    myPort.write("y,-5000");
   } else if (logCenterZ) {
     println("logCenterZ");
     myPort.write("log center z lowest point");
