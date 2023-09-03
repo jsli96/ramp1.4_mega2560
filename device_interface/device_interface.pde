@@ -344,16 +344,31 @@ void generate_random_list_2() {
 }
 
 void serial_write_next_point() {
-  if (static_point_list.size() != 0) {
-    if (m_index > 15) {
-      m_index = 0;
+  if (skin_vib_choice == 0) {
+    if (static_point_list.size() != 0) {
+      if (m_index > 15) {
+        m_index = 0;
+      }
+      int tmp= static_point_list.get(m_index);
+      println(tmp);
+      myPort.write(str(tmp));
+      m_index = m_index + 1;
+    } else {
+      println("Please generate the list first!!!");
     }
-    int tmp= static_point_list.get(m_index);
-    println(tmp);
-    myPort.write(str(tmp));
-    m_index = m_index + 1;
-  } else {
-    println("Please generate the list first!!!");
+  } else if (skin_vib_choice == 1) {
+        if (static_point_list.size() != 0) {
+      if (m_index > 15) {
+        m_index = 0;
+      }
+      int tmp= static_point_list.get(m_index) + 30;
+      println(tmp);
+      myPort.write(str(tmp));
+      m_index = m_index + 1;
+    } else {
+      println("Please generate the list first!!!");
+    }
+    
   }
 }
 
@@ -464,6 +479,7 @@ void mousePressed() {
       fill(0);
       text("Vib", 420*ratio, 850*ratio);
       skin_vib_choice = 1;
+      m_index = 0;
     } else {
       println("Change to skin");
       fill(255, 255, 0);
@@ -471,6 +487,7 @@ void mousePressed() {
       fill(0);
       text("Skin", 420*ratio, 850*ratio);
       skin_vib_choice = 0;
+      m_index = 0;
     }
   }
 
@@ -575,24 +592,34 @@ void mousePressed() {
     myPort.write("16");
   } else if (dynamic_1 && skin_vib_choice == 0) {
     println("dynamic_1");
+    myPort.write("21");
   } else if (dynamic_2 && skin_vib_choice == 0) {
     println("dynamic_2");
+    myPort.write("22");
   } else if (dynamic_3 && skin_vib_choice == 0) {
     println("dynamic_3");
+    myPort.write("23");
   } else if (dynamic_4 && skin_vib_choice == 0) {
     println("dynamic_4");
+    myPort.write("24");
   } else if (dynamic_5 && skin_vib_choice == 0) {
     println("dynamic_5");
+    myPort.write("25");
   } else if (dynamic_6 && skin_vib_choice == 0) {
     println("dynamic_6");
+    myPort.write("26");
   } else if (dynamic_7 && skin_vib_choice == 0) {
     println("dynamic_7");
+    myPort.write("27");
   } else if (dynamic_8 && skin_vib_choice == 0) {
     println("dynamic_8");
+    myPort.write("28");
   } else if (dynamic_9 && skin_vib_choice == 0) {
     println("dynamic_9");
+    myPort.write("29");
   } else if (dynamic_10 && skin_vib_choice == 0) {
     println("dynamic_10");
+    myPort.write("30");
   } else if (static_1 && skin_vib_choice == 1) {
     println("static_31_vib");
     myPort.write("31");
@@ -642,25 +669,25 @@ void mousePressed() {
     println("static_46");
     myPort.write("46");
   } else if (dynamic_1 && skin_vib_choice == 1) {
-    println("dynamic_1");
+    println("dynamic_21");
   } else if (dynamic_2 && skin_vib_choice == 1) {
-    println("dynamic_2");
+    println("dynamic_22");
   } else if (dynamic_3 && skin_vib_choice == 1) {
-    println("dynamic_3");
+    println("dynamic_23");
   } else if (dynamic_4 && skin_vib_choice == 1) {
-    println("dynamic_4");
+    println("dynamic_24");
   } else if (dynamic_5 && skin_vib_choice == 1) {
-    println("dynamic_5");
+    println("dynamic_25");
   } else if (dynamic_6 && skin_vib_choice == 1) {
-    println("dynamic_6");
+    println("dynamic_26");
   } else if (dynamic_7 && skin_vib_choice == 1) {
-    println("dynamic_7");
+    println("dynamic_27");
   } else if (dynamic_8 && skin_vib_choice == 1) {
-    println("dynamic_8");
+    println("dynamic_28");
   } else if (dynamic_9 && skin_vib_choice == 1) {
-    println("dynamic_9");
+    println("dynamic_29");
   } else if (dynamic_10 && skin_vib_choice == 1) {
-    println("dynamic_10");
+    println("dynamic_30");
   } else if (home) {
     println("home");
     myPort.write("adjusted home");
@@ -673,30 +700,5 @@ void mousePressed() {
   } else if (motor_stop) {
     println("Stop motors");
     myPort.write("stop motors");
-  }
-}
-
-
-void keyPressed()
-{
-  if (key == CODED)
-  {
-    if (keyCode == LEFT)
-    {
-      println("LLLLL");
-      myPort.write("x,25");
-    } else if (keyCode == RIGHT)
-    {
-      println("RRRRR");
-      myPort.write("x,-25");
-    } else if (keyCode == UP)
-    {
-      println("FFFFF");
-      myPort.write("y,25");
-    } else if (keyCode == DOWN)
-    {
-      println("BBBBB");
-      myPort.write("y,-25");
-    }
   }
 }
