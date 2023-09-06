@@ -82,7 +82,7 @@ void setup() {
   point_selection();
   pattern_selection();
   one_click();
-  myPort = new Serial (this, "COM3", 115200);
+  myPort = new Serial (this, "/dev/tty.usbserial-2110", 115200);
 }
 
 
@@ -670,24 +670,34 @@ void mousePressed() {
     myPort.write("46");
   } else if (dynamic_1 && skin_vib_choice == 1) {
     println("dynamic_21");
+    myPort.write("51");
   } else if (dynamic_2 && skin_vib_choice == 1) {
     println("dynamic_22");
+    myPort.write("52");
   } else if (dynamic_3 && skin_vib_choice == 1) {
     println("dynamic_23");
+    myPort.write("53");
   } else if (dynamic_4 && skin_vib_choice == 1) {
     println("dynamic_24");
+    myPort.write("54");
   } else if (dynamic_5 && skin_vib_choice == 1) {
     println("dynamic_25");
+    myPort.write("55");
   } else if (dynamic_6 && skin_vib_choice == 1) {
     println("dynamic_26");
+    myPort.write("56");
   } else if (dynamic_7 && skin_vib_choice == 1) {
     println("dynamic_27");
+    myPort.write("57");
   } else if (dynamic_8 && skin_vib_choice == 1) {
     println("dynamic_28");
+    myPort.write("58");
   } else if (dynamic_9 && skin_vib_choice == 1) {
     println("dynamic_29");
+    myPort.write("59");
   } else if (dynamic_10 && skin_vib_choice == 1) {
     println("dynamic_30");
+    myPort.write("60");
   } else if (home) {
     println("home");
     myPort.write("adjusted home");

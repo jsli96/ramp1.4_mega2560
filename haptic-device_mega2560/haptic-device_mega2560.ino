@@ -974,7 +974,8 @@ void big_left_curve()
   long start_point_y = adj_y_center - full_distance;
   move_y(-full_distance, 1400);
   delay(500);
-  move_z(z_center_move_distance, 1400);
+  int z_moveDown_distance = adj_z_back_low - adj_z_center;
+  move_z(z_moveDown_distance, 1400);
   long pre_x_internal_point = adj_x_center;
   long pre_y_internal_point = adj_y_center - full_distance;
   double step = PI / 1000;
@@ -985,25 +986,84 @@ void big_left_curve()
     double y_internal_point_1 = adj_y_center - full_distance * cos(angle);
     double x_move_distance = x_internal_point_1 - pre_x_internal_point;
     double y_move_distance = y_internal_point_1 - pre_y_internal_point;
-    // Serial.print("x_internal_point_1 = ");
-    // Serial.print(x_internal_point_1);
-    // Serial.print(", y_internal_point_1 = ");
-    // Serial.print(y_internal_point_1);
-    // Serial.print(", x_move_distance = ");
-    // Serial.print(x_move_distance);
-    // Serial.print(", y_move_distance = ");
-    // Serial.println(y_move_distance);
-    // delay(1000);
     myStepper_x.move(long(x_move_distance));
     myStepper_y.move(long(y_move_distance));
     float x_speed;
     float y_speed;
     x_speed = sqrt(pow(1400, 2) / (1 + pow((y_move_distance / x_move_distance), 2)));
     y_speed = sqrt(pow(1400, 2) / (1 + pow((x_move_distance / y_move_distance), 2)));
-    // Serial.print("x_speed = ");
-    // Serial.print(x_speed);
-    // Serial.print(", y_speed = ");
-    // Serial.println(y_speed);
+    while (myStepper_x.distanceToGo() != 0 || myStepper_y.distanceToGo() != 0)
+    {
+      myStepper_x.setSpeed(cal_speed_dir(myStepper_x.currentPosition() + long(x_move_distance), myStepper_x.currentPosition(), x_speed));
+      myStepper_y.setSpeed(cal_speed_dir(myStepper_y.currentPosition() + long(y_move_distance), myStepper_y.currentPosition(), y_speed));
+      if (myStepper_x.distanceToGo() != 0)
+      {
+        myStepper_x.run();
+      }
+      if (myStepper_y.distanceToGo() != 0)
+      {
+        myStepper_y.run();
+      }
+    }
+    pre_x_internal_point = x_internal_point_1;
+    pre_y_internal_point = y_internal_point_1;
+    int current_z_position = myStepper_z.currentPosition();
+    if (angle <= (PI / 2))
+    {
+      if (abs(current_z_position - adj_z_left_low) > 30)
+      {
+        if (current_z_position < adj_z_left_low)
+        {
+          move_z(10, 1400);
+        }
+        else if (current_z_position > adj_z_left_low)
+        {
+          move_z(-10, 1400);
+        }
+      }
+    }
+    else if (angle > (PI / 2))
+    {
+      if (abs(current_z_position - adj_z_front_low) > 30)
+      {
+        if (current_z_position < adj_z_front_low)
+        {
+          move_z(10, 1400);
+        }
+        else if (current_z_position > adj_z_front_low)
+        {
+          move_z(-10, 1400);
+        }
+      }
+    }
+  }
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+}
+void small_right_curve()
+{
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  long start_point_x = adj_x_center;
+  long start_point_y = adj_y_center + half_distance;
+  move_y(half_distance, 1400);
+  delay(500);
+  int z_moveDown_distance = adj_z_center_low - adj_z_center;
+  move_z(z_moveDown_distance, 1400);
+  long pre_x_internal_point = adj_x_center;
+  long pre_y_internal_point = adj_y_center + half_distance;
+  double step = PI / 1000;
+
+  for (double angle = 0; angle < PI; angle = angle + step)
+  {
+    double x_internal_point_1 = adj_x_center - half_distance * sin(angle);
+    double y_internal_point_1 = adj_y_center + half_distance * cos(angle);
+    double x_move_distance = x_internal_point_1 - pre_x_internal_point;
+    double y_move_distance = y_internal_point_1 - pre_y_internal_point;
+    myStepper_x.move(long(x_move_distance));
+    myStepper_y.move(long(y_move_distance));
+    float x_speed;
+    float y_speed;
+    x_speed = sqrt(pow(1400, 2) / (1 + pow((y_move_distance / x_move_distance), 2)));
+    y_speed = sqrt(pow(1400, 2) / (1 + pow((x_move_distance / y_move_distance), 2)));
     while (myStepper_x.distanceToGo() != 0 || myStepper_y.distanceToGo() != 0)
     {
       myStepper_x.setSpeed(cal_speed_dir(myStepper_x.currentPosition() + long(x_move_distance), myStepper_x.currentPosition(), x_speed));
@@ -1020,16 +1080,103 @@ void big_left_curve()
     pre_x_internal_point = x_internal_point_1;
     pre_y_internal_point = y_internal_point_1;
   }
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
 }
-
-void small_right_curve()
-{
-}
-
 void s_curve()
 {
-}
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  long start_point_x = adj_x_center;
+  long start_point_y = adj_y_center + full_distance;
+  move_y(full_distance, 1400);
+  delay(500);
+  int z_moveDown_distance = adj_z_front_low - adj_z_center;
+  move_z(z_moveDown_distance, 1400);
+  long pre_x_internal_point = start_point_x;
+  long pre_y_internal_point = start_point_y;
+  double step = PI / 1000;
 
+  for (double angle = 0; angle < PI; angle = angle + step)
+  {
+    double x_internal_point_1 = adj_x_center - (half_distance * sin(angle));
+    double y_internal_point_1 = adj_y_center + (half_distance + (half_distance * cos(angle)));
+    double x_move_distance = x_internal_point_1 - pre_x_internal_point;
+    double y_move_distance = y_internal_point_1 - pre_y_internal_point;
+    myStepper_x.move(long(x_move_distance));
+    myStepper_y.move(long(y_move_distance));
+    float x_speed;
+    float y_speed;
+    x_speed = sqrt(pow(1400, 2) / (1 + pow((y_move_distance / x_move_distance), 2)));
+    y_speed = sqrt(pow(1400, 2) / (1 + pow((x_move_distance / y_move_distance), 2)));
+    while (myStepper_x.distanceToGo() != 0 || myStepper_y.distanceToGo() != 0)
+    {
+      myStepper_x.setSpeed(cal_speed_dir(myStepper_x.currentPosition() + long(x_move_distance), myStepper_x.currentPosition(), x_speed));
+      myStepper_y.setSpeed(cal_speed_dir(myStepper_y.currentPosition() + long(y_move_distance), myStepper_y.currentPosition(), y_speed));
+      if (myStepper_x.distanceToGo() != 0)
+      {
+        myStepper_x.run();
+      }
+      if (myStepper_y.distanceToGo() != 0)
+      {
+        myStepper_y.run();
+      }
+    }
+    pre_x_internal_point = x_internal_point_1;
+    pre_y_internal_point = y_internal_point_1;
+    int current_z_position = myStepper_z.currentPosition();
+    if (abs(current_z_position - adj_z_center_low) > 30)
+    {
+      if (current_z_position < adj_z_center_low)
+      {
+        move_z(10, 1400);
+      }
+      else if (current_z_position > adj_z_center_low)
+      {
+        move_z(-10, 1400);
+      }
+    }
+  }
+
+  for (double angle = 0; angle < PI; angle = angle + step)
+  {
+    double x_internal_point_1 = adj_x_center + half_distance * cos(angle);
+    double y_internal_point_1 = adj_y_center -(half_distance - half_distance * cos(angle));
+    double x_move_distance = x_internal_point_1 - pre_x_internal_point;
+    double y_move_distance = y_internal_point_1 - pre_y_internal_point;
+    myStepper_x.move(long(x_move_distance));
+    myStepper_y.move(long(y_move_distance));
+    float x_speed;
+    float y_speed;
+    x_speed = sqrt(pow(1400, 2) / (1 + pow((y_move_distance / x_move_distance), 2)));
+    y_speed = sqrt(pow(1400, 2) / (1 + pow((x_move_distance / y_move_distance), 2)));
+    while (myStepper_x.distanceToGo() != 0 || myStepper_y.distanceToGo() != 0)
+    {
+      myStepper_x.setSpeed(cal_speed_dir(myStepper_x.currentPosition() + long(x_move_distance), myStepper_x.currentPosition(), x_speed));
+      myStepper_y.setSpeed(cal_speed_dir(myStepper_y.currentPosition() + long(y_move_distance), myStepper_y.currentPosition(), y_speed));
+      if (myStepper_x.distanceToGo() != 0)
+      {
+        myStepper_x.run();
+      }
+      if (myStepper_y.distanceToGo() != 0)
+      {
+        myStepper_y.run();
+      }
+    }
+    pre_x_internal_point = x_internal_point_1;
+    pre_y_internal_point = y_internal_point_1;
+    int current_z_position = myStepper_z.currentPosition();
+    if (abs(current_z_position - adj_z_back_low) > 30)
+    {
+      if (current_z_position < adj_z_back_low)
+      {
+        move_z(10, 1400);
+      }
+      else if (current_z_position > adj_z_back_low)
+      {
+        move_z(-10, 1400);
+      }
+    }
+  }
+}
 void h_left()
 {
   Serial.println("Now execute horizonal left");
@@ -1388,104 +1535,145 @@ void point_15_vib()
 void big_left_curve_vib()
 {
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  long start_point_x = adj_x_center;
-  long start_point_y = adj_y_center - full_distance;
   move_y(-full_distance, 1400);
-  delay(500);
-  move_z(z_center_move_distance, 1400);
-  long pre_x_internal_point = adj_x_center;
-  long pre_y_internal_point = adj_y_center - full_distance;
-  double step = PI / 1000;
+  int z_adjustment = adj_z_back_low - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
 
-  for (double angle = 0; angle < PI; angle = angle + step)
-  {
-    double x_internal_point_1 = adj_x_center + full_distance * sin(angle);
-    double y_internal_point_1 = adj_y_center - full_distance * cos(angle);
-    double x_move_distance = x_internal_point_1 - pre_x_internal_point;
-    double y_move_distance = y_internal_point_1 - pre_y_internal_point;
-    // Serial.print("x_internal_point_1 = ");
-    // Serial.print(x_internal_point_1);
-    // Serial.print(", y_internal_point_1 = ");
-    // Serial.print(y_internal_point_1);
-    // Serial.print(", x_move_distance = ");
-    // Serial.print(x_move_distance);
-    // Serial.print(", y_move_distance = ");
-    // Serial.println(y_move_distance);
-    // delay(1000);
-    myStepper_x.move(long(x_move_distance));
-    myStepper_y.move(long(y_move_distance));
-    float x_speed;
-    float y_speed;
-    x_speed = sqrt(pow(1400, 2) / (1 + pow((y_move_distance / x_move_distance), 2)));
-    y_speed = sqrt(pow(1400, 2) / (1 + pow((x_move_distance / y_move_distance), 2)));
-    // Serial.print("x_speed = ");
-    // Serial.print(x_speed);
-    // Serial.print(", y_speed = ");
-    // Serial.println(y_speed);
-    while (myStepper_x.distanceToGo() != 0 || myStepper_y.distanceToGo() != 0)
-    {
-      myStepper_x.setSpeed(cal_speed_dir(myStepper_x.currentPosition() + long(x_move_distance), myStepper_x.currentPosition(), x_speed));
-      myStepper_y.setSpeed(cal_speed_dir(myStepper_y.currentPosition() + long(y_move_distance), myStepper_y.currentPosition(), y_speed));
-      if (myStepper_x.distanceToGo() != 0)
-      {
-        myStepper_x.run();
-      }
-      if (myStepper_y.distanceToGo() != 0)
-      {
-        myStepper_y.run();
-      }
-    }
-    pre_x_internal_point = x_internal_point_1;
-    pre_y_internal_point = y_internal_point_1;
-  }
+  move_z(-z_adjustment, 1400);
+  long temp = full_distance / sqrt(2);
+  move_x_y_parallel(temp, long(full_distance - temp), 1400);
+  z_adjustment = (adj_z_back_low + adj_z_left_low) / 2 - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+
+  move_z(-z_adjustment, 1400);
+  move_x_y_parallel(long(full_distance - temp), temp, 1400);
+  z_adjustment = adj_z_left_low - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+
+  move_z(-z_adjustment, 1400);
+  move_x_y_parallel(-long(full_distance - temp), temp, 1400);
+  z_adjustment = (adj_z_front_low + adj_z_left_low) / 2 - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+
+  move_z(-z_adjustment, 1400);
+  move_x_y_parallel(-temp, long(full_distance - temp), 1400);
+  z_adjustment = (adj_z_front_low + adj_z_left_low) / 2 - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+  move_z(-z_adjustment, 1400);
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
 }
 void small_right_curve_vib()
 {
-}
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  move_y(half_distance, 1400);
+  int z_adjustment = adj_z_center_low - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
 
+  move_z(-z_adjustment, 1400);
+  long temp = half_distance / sqrt(2);
+  move_x_y_parallel(-temp, -long(half_distance - temp), 1400);
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+
+  move_z(-z_adjustment, 1400);
+  move_x_y_parallel(-long(half_distance - temp), -temp, 1400);
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+
+  move_z(-z_adjustment, 1400);
+  move_x_y_parallel(long(half_distance - temp), -temp, 1400);
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+
+  move_z(-z_adjustment, 1400);
+  move_x_y_parallel(temp, -long(half_distance - temp), 1400);
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+  move_z(-z_adjustment, 1400);
+
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+}
 void s_curve_vib()
 {
-}
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  move_y(full_distance, 1400);
+  int z_adjustment = adj_z_front_low - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
 
+  move_z(-z_adjustment, 1400);
+  move_x_y_parallel(-half_distance_at_45, -(full_distance - half_distance_at_45), 1400);
+  z_adjustment = adj_z_center_low - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+
+  vib_touch_center();
+
+  move_x_y_parallel(half_distance_at_45, -half_distance_at_45, 1400);
+  z_adjustment = adj_z_center_low - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+
+  move_z(-z_adjustment, 1400);
+  move_x_y_parallel(-half_distance_at_45, -(full_distance - half_distance_at_45), 1400);
+  z_adjustment = adj_z_back_low - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+  move_z(-z_adjustment, 1400);
+
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+}
 void h_left_vib()
 {
   Serial.println("Now execute horizonal left");
+
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  move_x_y_parallel(-4242, 4242, 1400);
-  delay(500);
-  move_z(z_center_move_distance, 1400);
-  delay(100);
-  move_x(6000, 1400);
-  delay(500);
-  move_z(200, 1400);
+  move_x_y_parallel(-full_distance_at_45, full_distance_at_45, 1400);
+  int z_adjustment = ((adj_z_front_low + adj_z_right_low) / 2) - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+  move_z(-z_adjustment, 1400);
+  move_x(7071, 1400);
+  int z_adjustment_2 = ((adj_z_front_low + adj_z_left_low) / 2) - adj_z_center;
+  move_z(z_adjustment_2, 1400);
+  vib_run_1s();
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("Horizonal left executed");
 }
 void h_right_vib()
 {
-  Serial.println("Now execute horizonal right");
+  Serial.println("Now execute horizonal left");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  move_x_y_parallel(4242, -4242, 1400);
-  delay(500);
-  move_z(z_center_move_distance, 1400);
-  delay(100);
-  move_x(-6000, 1400);
-  delay(500);
-  move_z(200, 1400);
+  move_x_y_parallel(full_distance_at_45, -full_distance_at_45, 1400);
+  int z_adjustment = ((adj_z_back_low + adj_z_back_low) / 2) - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+  move_z(-z_adjustment, 1400);
+  move_x(-7071, 1400);
+  int z_adjustment_2 = ((adj_z_back_low + adj_z_back_low) / 2) - adj_z_center;
+  move_z(z_adjustment_2, 1400);
+  vib_run_1s();
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  Serial.println("Horizonal right executed");
+  Serial.println("Horizonal left executed");
 }
 void v_forward_vib()
 {
   Serial.println("Now execute virtical forward");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  move_x_y_parallel(-2121, -2121, 1400);
-  delay(500);
-  move_z(z_center_move_distance, 1400);
-  delay(100);
-  move_y(3000, 1400);
-  delay(500);
-  move_z(200, 1400);
+  move_x_y_parallel(-half_distance_at_45, -half_distance_at_45, 1400);
+  int z_adjustment = adj_z_center_low - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+  move_z(-z_adjustment, 1400);
+  move_y(5000, 1400);
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("Virtical forward executed");
 }
@@ -1493,90 +1681,59 @@ void v_backward_vib()
 {
   Serial.println("Now execute virtical backward");
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  move_x_y_parallel(2121, 2121, 1400);
-  delay(500);
-  move_z(z_center_move_distance, 1400);
-  delay(100);
-  move_y(-3000, 1400);
-  delay(500);
-  move_z(200, 1400);
+  move_x_y_parallel(half_distance_at_45, half_distance_at_45, 1400);
+  int z_adjustment = adj_z_center_low - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+  move_z(-z_adjustment, 1400);
+  move_y(-5000, 1400);
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
   move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("Virtical backward executed");
 }
 void multi_fb_vib()
 {
   Serial.println("Now execute virtical forward and backward");
-  move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  move_z(z_center_move_distance, 1400);
-  delay(100);
-  move_y(6000, 1400);
-  delay(50);
-  move_y(-6000, 1400);
+  point_16_vib();
+  vib_touch_center();
   Serial.println("Executed virtical forward and backward");
 }
 void multi_incomplete_t_vib()
 {
   Serial.println("Now execute mutiple direction 1");
-  move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  move_z(z_center_move_distance, 1400);
-  delay(100);
-  move_x_y_parallel(-4242, 4242, 989);
-  delay(50);
-  myStepper_x.move(-long(1758));
-  myStepper_y.move(-long(4242));
-  float x_speed;
-  float y_speed;
-  x_speed = sqrt(pow(1400, 2) / (1 + pow((4242 / 1758), 2)));
-  y_speed = sqrt(pow(1400, 2) / (1 + pow((1758 / 4242), 2)));
-  while (myStepper_x.distanceToGo() != 0 || myStepper_y.distanceToGo() != 0)
-  {
-    myStepper_x.setSpeed(cal_speed_dir(myStepper_x.currentPosition() - long(1758), myStepper_x.currentPosition(), x_speed));
-    myStepper_y.setSpeed(cal_speed_dir(myStepper_y.currentPosition() - long(4242), myStepper_y.currentPosition(), y_speed));
-    if (myStepper_x.distanceToGo() != 0)
-    {
-      myStepper_x.run();
-    }
-    if (myStepper_y.distanceToGo() != 0)
-    {
-      myStepper_y.run();
-    }
-  }
+  vib_touch_center();
+  move_x_y_parallel(-full_distance_at_45, full_distance_at_45, 1400);
+  int z_adjustment = ((adj_z_front_low + adj_z_right_low) / 2) - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
 
+  move_z(-z_adjustment, 1400);
+  move_x_y_parallel(-(full_distance-full_distance_at_45), -full_distance_at_45, 1400);
+  z_adjustment = adj_z_right_low - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+
+  move_to_center(adj_x_center, adj_y_center, adj_z_center);
   Serial.println("Executed mutiple direction 1");
 }
 void multi_complete_t_vib()
 {
   Serial.println("Now execute mutiple direction 2");
-  move_to_center(adj_x_center, adj_y_center, adj_z_center);
-  move_z(z_center_move_distance, 1400);
-  delay(100);
-  move_x_y_parallel(-4242, 4242, 989);
-  delay(50);
-  myStepper_x.move(long(-1758));
-  myStepper_y.move(long(-4242));
-  float x_speed;
-  float y_speed;
-  x_speed = sqrt(pow(1400, 2) / (1 + pow((4242 / 1758), 2)));
-  y_speed = sqrt(pow(1400, 2) / (1 + pow((1758 / 4242), 2)));
-  // Serial.print("x_speed = ");
-  // Serial.print(x_speed);
-  // Serial.print(", y_speed = ");
-  // Serial.println(y_speed);
-  while (myStepper_x.distanceToGo() != 0 || myStepper_y.distanceToGo() != 0)
-  {
-    myStepper_x.setSpeed(cal_speed_dir(myStepper_x.currentPosition() + long(-1758), myStepper_x.currentPosition(), x_speed));
-    myStepper_y.setSpeed(cal_speed_dir(myStepper_y.currentPosition() + long(-4242), myStepper_y.currentPosition(), y_speed));
-    if (myStepper_x.distanceToGo() != 0)
-    {
-      myStepper_x.run();
-    }
-    if (myStepper_y.distanceToGo() != 0)
-    {
-      myStepper_y.run();
-    }
-  }
-  delay(50);
-  move_to_center(adj_x_center, adj_y_center, adj_z_center);
+  vib_touch_center();
+  move_x_y_parallel(-full_distance_at_45, full_distance_at_45, 1400);
+  int z_adjustment = ((adj_z_front_low + adj_z_right_low) / 2) - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+
+  move_z(-z_adjustment, 1400);
+  move_x_y_parallel(-(full_distance-full_distance_at_45), -full_distance_at_45, 1400);
+  z_adjustment = adj_z_right_low - adj_z_center;
+  move_z(z_adjustment, 1400);
+  vib_run_1s();
+
+  move_z(-z_adjustment, 1400);
+  vib_touch_center();
   Serial.println("Executed mutiple direction 2");
 }
 //===========================      ENDs      =====================//
